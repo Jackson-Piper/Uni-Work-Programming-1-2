@@ -1,5 +1,5 @@
 import java.util.*;
-public class Main
+public class task2v2
 {
 
   public static void main (String[]args)
