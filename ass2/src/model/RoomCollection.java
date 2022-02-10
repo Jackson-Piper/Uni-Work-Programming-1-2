@@ -83,6 +83,17 @@ public class RoomCollection {
 		rooms[roomNumber].completeMaintance();
 	}
 
+	public int getNoStandardRooms(){	
+		return noStandard;
+	
+	}
+	
+	public int getNoSuiteRooms(){
+		return noSuite;
+	}
+	
+	public 
+	
 	//read from file
 
 	//write to file
