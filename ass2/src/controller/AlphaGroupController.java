@@ -1,5 +1,3 @@
-package controller;
-
 
 package controller;
 
@@ -92,7 +90,7 @@ public class AlphaGroupController {
 	private void addRoom() {
 		view.typeOfRoom();
 		String roomType = sc.nextLine();
-			while(!(roomType.equalsIgnoreCase("S"))&&!(roomType.equalsIgnoreCase("R"))){
+			while(!(roomType.equalsIgnoreCase("s"))&&!(roomType.equalsIgnoreCase("r"))){
 				view.InvalidChoice();
 				view.typeOfRoom();
 				roomType=sc.nextLine();
@@ -160,7 +158,7 @@ public class AlphaGroupController {
 		String roomID = sc.nextLine();
 
 		//turn this into its own method for validation testing
-		while(!(Character.toString(roomID.charAt(0)).equals("R")) && !(Character.toString(roomID.charAt(0)).equals("S"))){
+		while(!(Character.toString(roomID.charAt(0)).equals("r")) && !(Character.toString(roomID.charAt(0)).equals("s"))){
 			view.invalidString();
 			roomID = sc.nextLine();
 		}
@@ -183,11 +181,11 @@ public class AlphaGroupController {
 	}
     
     private boolean idValidator(String roomID){
-        	if(!(Character.toString(roomID.charAt(0)).equals("R")) && !(Character.toString(roomID.charAt(0)).equals("S"))){
+        	if(!(Character.toString(roomID.charAt(0)).equals("r")) && !(Character.toString(roomID.charAt(0)).equals("s"))){
         	    return false;
 		}
 		
-	        if(Character.toString(roomID.charAt(0)).equals("R")){
+	        if(Character.toString(roomID.charAt(0)).equals("r")){
 	           int noValid = model.getNoStandardRooms();
 	           if(noVaild<(Integer.parseInt(Character.getNumericValue(roomID.charAt(1))+Character.getNumericValue(roomID.charAt(2))+Character.getNumericValue(roomID.charAt(3)){
 	               return false;
@@ -255,6 +253,7 @@ public class AlphaGroupController {
 	}
 
 	private void displayRooms() {
+	    view.displayRooms(model.displayRooms);
 	}
 
 	private void saveToFile() {
