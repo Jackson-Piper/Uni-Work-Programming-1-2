@@ -1,5 +1,8 @@
 package controller;
 
+
+package controller;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -120,6 +123,36 @@ public class AlphaGroupController {
 	}
 	
 	private void rentRoom() {
+	    view.getRoomID();
+	    String roomID = sc.nextLine();
+	    while (idValidator(roomID)){
+	        view.invalidID();
+	        roomID = sc.nextLine();
+	    }
+	    view.getCustID();
+	    String custID = sc.nectLine();
+	    while(custIDValidator(custID)){
+	        view.invalidID();
+	        custID = sc.nextLine();
+	    }
+	    
+	    view.getDate();
+		String rentDate = sc.nextLine();
+		while (valid){
+			dateValidator(rentDate);
+			view.invalidDate();
+			rentDate =sc.nextLine();
+		}
+		String str[] = rentDate.split("/");
+		int day = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+		int year = Integer.parseInt(str[3]);
+		
+		viwe.getNoDays();
+		int noDays = sc.nextInt();
+		sc.nextLine();
+	    
+	    model.rentRoom(String roomID, String custID, int day, int month, int year, int rentDays)
 	}
 
 	private void returnRoom() {
@@ -134,7 +167,6 @@ public class AlphaGroupController {
 
 		view.getDate();
 		String rentDate = sc.nextLine();
-		boolean valid = false;
 		while (valid){
 			dateValidator(rentDate);
 			view.invalidDate();
@@ -149,7 +181,34 @@ public class AlphaGroupController {
 		menu();
 
 	}
-
+    
+    private boolean idValidator(String roomID){
+        	if(!(Character.toString(roomID.charAt(0)).equals("R")) && !(Character.toString(roomID.charAt(0)).equals("S"))){
+        	    return false;
+		}
+		
+	        if(Character.toString(roomID.charAt(0)).equals("R")){
+	           int noValid = model.getNoStandardRooms();
+	           if(noVaild<(Integer.parseInt(Character.getNumericValue(roomID.charAt(1))+Character.getNumericValue(roomID.charAt(2))+Character.getNumericValue(roomID.charAt(3)){
+	               return false;
+	           }
+	           else{
+	               return true;
+	           }
+	        }
+	        else{
+	            int noValid = model.getNoSuiteRooms();
+	           if(noVaild<(Integer.parseInt(Character.getNumericValue(roomID.charAt(1))+Character.getNumericValue(roomID.charAt(2))+Character.getNumericValue(roomID.charAt(3)){
+	               return false;
+	           }
+	           else{
+	               return true;
+	           }
+	        }
+		    
+    }
+    
+        
 	private boolean dateValidator(String rentDate) {
 		DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         sdf.setLenient(false);
@@ -174,9 +233,25 @@ public class AlphaGroupController {
      }
 
 	private void maintenance() {
+	     view.getRoomID();
+	    String roomID = sc.nextLine();
+	    while (idValidator(roomID)){
+	        view.invalidID();
+	        roomID = sc.nextLine();
+	    }
+	  model.maintenance(roomId);
+	    
 	}
 
 	private void completMaint() {
+	     view.getRoomID();
+	    String roomID = sc.nextLine();
+	    while (idValidator(roomID)){
+	        view.invalidID();
+	        roomID = sc.nextLine();
+	    }
+	  model.maintenance(roomId);
+	    model.completeMaintance(String roomIDSearch);
 	}
 
 	private void displayRooms() {
