@@ -83,30 +83,6 @@ public class RoomCollection {
 		rooms[roomNumber].completeMaintance();
 	}
 
-	public int getNoStandardRooms(){	
-		return noStandard;
-	
-	}
-	
-	public int getNoSuiteRooms(){
-		return noSuite;
-	}
-	
-	public String displayRooms(){
-	    String roomsDisplay;
-	    for (int i = 0; i< roomCounter; i++){
-	     roomsDisplay = "Room ID: \t\t"+ rooms[i].getRoomID();
-	                  "\nNumber of Beds: \t" + rooms[i].getNoBeds();
-	                  "\nStatus:\t\t" + rooms[i].getStatus();
-	                  "\nLast Maintenance Date: "+rooms[i].getLastMaintance();
-	                  "\nFeature Summary: \t" + rooms[i].getFeatSum();
-	                  "\n---------------Rental Records---------------\n"+rooms[i]getRentalRecord();
-	    
-	    
-	    
-	    retrun roomsDisplay;
-	}
-	
 	//read from file
 
 	//write to file

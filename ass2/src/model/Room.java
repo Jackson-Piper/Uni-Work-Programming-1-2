@@ -92,8 +92,8 @@ public abstract class Room {
     public String getRentalDetails(){
      String details;
         for (int i = 0; i<10; i++){
-            if(rentalRecord[i]!=null)
-                details=+rentalRecord[i].getDetails()+"\n--------------------------------------\n";
+            if(rentalRecords[i]!=null)
+                details=+rentalRecords[i].getDetails()+"\n--------------------------------------\n";
             }
     }
 }
