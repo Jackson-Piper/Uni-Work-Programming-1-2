@@ -89,4 +89,11 @@ public abstract class Room {
     public double getRate() {
         return rate;
     }
+    public String getRentalDetails(){
+     String details;
+        for (int i = 0; i<10; i++){
+            if(rentalRecord[i]!=null)
+                details=+rentalRecord[i].getDetails()+"\n--------------------------------------\n";
+            }
+    }
 }
