@@ -21,7 +21,6 @@ public abstract class Room {
         this.featSum = featSum;
         status = "avaliable";
         setRate();
-        setLateFeeRate();
 
         rentalRecords = new RentalRecord[MAX_RECORDS];
     }
@@ -56,8 +55,6 @@ public abstract class Room {
         status = "avaliable";
     }
 
-    public void setLateFeeRate() {
-    }
 
     public double getLateFeeRate() {
         return lateFeeRate;
@@ -90,10 +87,42 @@ public abstract class Room {
         return rate;
     }
     public String getRentalDetails(){
-     String details;
+     String details ="";
         for (int i = 0; i<10; i++){
-            if(rentalRecords[i]!=null)
-                details=+rentalRecords[i].getDetails()+"\n--------------------------------------\n";
+            if(rentalRecords[i]!=null){
+                details += rentalRecords[i].getDetails() +"\n--------------------------------------\n";
             }
+        }   
+        return details;
     }
+
+    public int getNoBeds() {
+        return noBed;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    //need to add this later
+    public String getLastMaintance() {
+        return null;
+    }
+
+    public String getFeatSum() {
+        return featSum;
+    }
+
+    public DateTime getLastRentDate() {
+        return rentalRecords[0].getRentDate();
+    }
+
+    public DateTime getLastEstRentDate() {
+        return rentalRecords[0].getEstimatedReturnDate();
+    }
+
+    public String getLastRentalDetails() {
+        return rentalRecords[0].getDetails();
+    }
+
 }

@@ -60,7 +60,7 @@ public class Suite extends Room {
                 return lateFeeRate;
             }
 
-        @Override
+        
         public void setLateFeeRate() {
                 if (dayTillMaint <= 3) {
                         lateFeeRate = 699.3;

@@ -19,7 +19,7 @@ public class StandardRoom extends Room {
     //maintence
     //can call from superclass its no different 
 
-    @Override
+    
     public void setLateFeeRate() {
         lateFeeRate = rate * 1.35;
         
