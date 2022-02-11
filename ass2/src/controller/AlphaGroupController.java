@@ -259,7 +259,7 @@ public class AlphaGroupController {
 			String str[] = rentDate.split("/");
 			int year = Integer.parseInt(str[2]);
 
-			if (year > currentYear || year < currentYear - 100) {
+			if (year < currentYear || year < (currentYear - 100)) {
 				return false;
 			}
 
