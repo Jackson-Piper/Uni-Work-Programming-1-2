@@ -262,13 +262,14 @@ public class AlphaGroupController {
 			if (year < currentYear || year < (currentYear - 100)) {
 				return false;
 			}
+			else{
+			    return true;
+			}
 
 		} catch (NumberFormatException | ParseException ex) {
 
 			return false; // Returns false if parsing fails (in case of bad input).
 		}
-
-		return true; // Returns true for valid date Strings
 	}
 
 	private void maintenance() {
