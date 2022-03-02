@@ -153,17 +153,18 @@ public class RobotControl implements Control {
 			 target = findNextBlockRight(arr);
 			
 			//move to that block
-			while(this.width!=target) {
-				while(pathBlockAcross(arr)) {
+			while(this.width>target) {
+				while(pathBlockAcross(arr, right)) {
 					upArm1();
 				}
 				extendArm2();
 			}
 			
 			//move down to positing to pick up the block
-			while(this.height+this.depth>colHeight(arr)) {
+				//CHECK WHICH colHeight NEEDS TO BE USED
+			while(this.height-this.depth>colHeight(arr, right)) {
 				if(pathBlockedDown(arr)) {
-					while(this.height+this.depth>colHeight(arr)) {
+					while(this.height+this.depth>colHeight(arr, right)) {
 						lowerArm3();
 						counter++;
 					}
@@ -188,16 +189,17 @@ public class RobotControl implements Control {
 			
 
 			//move to destination col
-			while (this.width != 10) {
-				while(pathBlockAcross(arr)) {
+			while (this.width > 10) {
+				while(pathBlockAcross(arr, right)) {
 					upArm1();
 				}
 				extendArm2();
 			}
 			
 			//lower into place
+				//CHECK WHICH colHeight NEEDS TO BE USED
 			if (colHeight(arr) < 1) {
-				while (this.height-this.depth!=colHeight(arr)) {
+				while (this.height-this.depth>colHeight(arr)) {
 					if (pathBlockedDown(arr)) {
 						while (this.height - this.depth > colHeight(arr, right)) {
 							lowerArm3();
@@ -235,19 +237,20 @@ public class RobotControl implements Control {
 					target = findNextBlockLeft(arr);
 					
 					//move to that block
-					while(this.width!=target) {
-						while(pathBlockAcross(arr)) {
+					while(this.width>target) {
+						while(pathBlockAcross(arr, right)) {
 							upArm1();
 						}
 						contractArm2();
 					}
 					
 					//move down to positing to pick up the block
-					while(this.height+this.depth>colHeight(arr)+1) {
+						//CHECK WHICH colHeight NEEDS TO BE USED
+					while(this.height+this.depth>colHeight(arr)) {
 						System.out.println("y");
 						if(pathBlockedDown(arr)) {
 							System.out.println("n");
-							while(this.height - this.depth != colHeight(arr, right)+1) {
+							while(this.height + this.depth > colHeight(arr, right)) {
 								lowerArm3();
 								counter++;
 							}
@@ -272,16 +275,17 @@ public class RobotControl implements Control {
 					
 
 					//move to destination col
-					while (this.width != 1) {
-						while(pathBlockAcross(arr)) {
+					while (this.width > 1) {
+						while(pathBlockAcross(arr, right)) {
 							upArm1();
 						}
 						contractArm2();
 					}
 					
 					//lower into place
+						//CHECK WHICH colHeight NEEDS TO BE USED
 					if (colHeight(arr) < 1) {
-						while (this.height != this.depth) {
+						while (this.height-this.depth>colHeight(arr)) {
 							if (pathBlockedDown(arr)) {
 								while (this.height + this.depth > colHeight(arr, right)) {
 									lowerArm3();
@@ -329,11 +333,15 @@ public class RobotControl implements Control {
 		}
 	}
 
-	private boolean pathBlockAcross(int[][] arr) {
-		if(this.height-this.depth< colHeight(arr)+this.depth) {
-		return true;
+	private boolean pathBlockAcross(int[][] arr, boolean right) {
+		if(this.height-this.depth>maxHeight(arr)) {
+		return false;
 		}else {
+			if(this.height-this.depth<colHeight(arr, right)){
+			return true;
+			}else{
 			return false;
+			}
 		}
 	}
 
@@ -372,7 +380,7 @@ public class RobotControl implements Control {
 	}	
 
 	private boolean pathBlockedDown(int[][]arr) {
-		if(this.height == maxHeight(arr)) {
+		if(this.height - this.depth > maxHeight(arr)) {
 			if(this.width>tallestCol(arr)) {
 				return true;
 			}else {
@@ -471,15 +479,6 @@ public class RobotControl implements Control {
 			}
 		}
 		return colNum;
-	}
-
-	private int colHeight(int[][] arr ) {
-		int tempHeight = 0;
-		for (int i = 0; i < arr[this.width-1].length; i++) {
-			tempHeight = tempHeight + arr[this.width-1][i];
-		}
-
-		return tempHeight;
 	}
 
 	private int findNextBlockRight(int[][] arr) {
