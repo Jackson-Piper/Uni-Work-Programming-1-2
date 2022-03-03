@@ -22,8 +22,8 @@ public class RobotControl implements Control {
 		this.robot = robot;
 
 		// some hard coded init values you can change these for testing
-		this.barHeights = new int[] {  };
-		this.blockHeights = new int[] { 1 ,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,};
+		this.barHeights = new int[] {};
+		this.blockHeights = new int[] { 1,2,3,2, };
 
 		robot.init(this.barHeights, this.blockHeights, height, width, depth);
 
@@ -98,19 +98,20 @@ public class RobotControl implements Control {
 		int v2 = 18 - i;
 		int v3 = 15 + i;
 		try {
-		if (Integer.toString(this.blockHeights[i - 2]) != null) {
-			if (this.blockHeights.length >= v1 && this.blockHeights.length < v2) {
-				return 2;
-			} else if (this.blockHeights.length >= v2 && this.blockHeights.length < v3) {
-				return 3;
-			} else if (this.blockHeights.length >= v3) {
-				return 4;
-			}
+			if (Integer.toString(this.blockHeights[i - 2]) != null) {
+				if (this.blockHeights.length >= v1 && this.blockHeights.length < v2) {
+					return 2;
+				} else if (this.blockHeights.length >= v2 && this.blockHeights.length < v3) {
+					return 3;
+				} else if (this.blockHeights.length >= v3) {
+					return 4;
+				}
 
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return 0;
 		}
-		}catch(ArrayIndexOutOfBoundsException e){
 		return 0;
-	}return 0;
 	}
 
 	private int placeInArray(int rowNum, int counter) {
@@ -143,296 +144,304 @@ public class RobotControl implements Control {
 		int noMoved = 0;
 		int target = 0;
 		this.depth = 1;
+		boolean removeBlock = false;
 		System.out.println("\n\nstart\n\n");
-		while(noMoved<this.blockHeights.length){
-			
-			
-			if(right) {
-			System.out.print("\nStart Right\n-----\n");
-			//Find the block to pick up
-			 target = findNextBlockRight(arr);
-			System.out.println("Target Col: "+target);
-			//move to that block
-			while(this.width<target) {
-				while(pathBlockAcross(arr, right)) {
-					upArm1();
-				}
-				extendArm2();
-			}
-			
-			//move down to positing to pick up the block
-				//CHECK WHICH colHeight NEEDS TO BE USED
-			System.out.println("Arm1 Height : "+this.height);
-			System.out.println("arm3 Depth: "+this.depth);
-			System.out.println("Col "+target+" Height: "+(colHeightBelow(arr)));
-			while(this.height-this.depth>colHeightBelow(arr)) {
-				if(pathBlockedDown(arr)) {
-					while(this.height-this.depth>colHeightBelow(arr)) {
-						downArm1();
-					}
-				}else {
-					lowerArm3();
-						counter++;
-				}
-			}
-			//pickup the block and update relevant info
-			
-			robot.pick();
-			blockSize = getBlockSize(arr);
-			this.depth = this.depth + blockSize;
-			arr = updateArr(arr, blockSize);
-			
-			
-			//move the arm3 back up to optimal height
-			while(counter>0) {
-				raiseArm3();{
-					counter--;
-				}
-			}
-			
+		while (noMoved < this.blockHeights.length) {
 
-			//move to destination col
-			while (this.width < 10) {
-				while(pathBlockAcross(arr, right)) {
-					upArm1();
+			if (right) {
+				System.out.print("\nStart Right\n-----\n");
+				// Find the block to pick up
+				target = findNextBlockRight(arr);
+				System.out.println("Target Col: " + target);
+				// move to that block
+				while (this.width < target) {
+					while (pathBlockAcross(arr, right)) {
+						upArm1();
+					}
+					extendArm2();
 				}
-				extendArm2();
-			}
-			
-			//lower into place
-				//CHECK WHICH colHeight NEEDS TO BE USED
-			if (colHeight(arr, right) < 1) {
-				while (this.height-this.depth>colHeight(arr, right)) {
+
+				// move down to positing to pick up the block
+				// CHECK WHICH colHeight NEEDS TO BE USED
+				System.out.println("Arm1 Height : " + this.height);
+				System.out.println("arm3 Depth: " + this.depth);
+				System.out.println("Col " + target + " Height: " + (colHeightBelow(arr)));
+				while (this.height - this.depth > colHeightBelow(arr)) {
 					if (pathBlockedDown(arr)) {
-						while (this.height - this.depth > colHeight(arr, right)) {
-							downArm1();
-							
-						}
+//					while(this.height-this.depth>colHeightBelow(arr)) {
+						downArm1();
 					} else {
 						lowerArm3();
 						counter++;
 					}
 				}
-			}else {
-				while(this.height-this.depth>colHeight(arr, right)) {
-					if(pathBlockedDown(arr)) {
-						while(this.height-this.depth>colHeight(arr, right)) {
-							downArm1();
-						}
-					}else {
-						lowerArm3();
+				// pickup the block and update relevant info
+
+				robot.pick();
+				removeBlock = true;
+				blockSize = getBlockSize(arr);
+				this.depth = this.depth + blockSize;
+				arr = updateArr(arr, blockSize, removeBlock);
+				for (int i = 0; i < arr.length; i++) {
+					System.out.println(Arrays.toString(arr[i]));
+				}
+
+				// move the arm3 back up to optimal height
+				while (counter > 0) {
+					raiseArm3();
+					{
+						counter--;
+					}
+				}
+
+				// move to destination col
+				while (this.width < 10) {
+					while (pathBlockAcross(arr, right)) {
+						upArm1();
+					}
+					extendArm2();
+				}
+
+				// lower Arm1 or arm3 into place
+				if (colHeight(arr, right) < 1) {
+					while (this.height - this.depth > colHeight(arr, right)) {
+						if (pathBlockedDown(arr)) {
+							while (this.height - this.depth > colHeight(arr, right)) {
+								downArm1();
+
+							}
+						} else {
+							lowerArm3();
 							counter++;
-					}
-				}
-			}
-
-			//place block and update relevant information
-			robot.drop();
-			arr = updateArr(arr, blockSize);
-			this.depth = this.depth -blockSize;
-			blockSize = 0;
-			right = false;
-			noMoved++;
-			//move arm back into optimal position
-			while(counter>0) {
-				raiseArm3();{
-					counter--;
-				}
-			}
-			
-			System.out.print("\nend Right\n-----");
-			//Move onto right
-			
-			
-			//next slide
-			}else {
-			
-					System.out.print("Start Left\n-----\n");
-					//Find the block to pick up
-					target = findNextBlockLeft(arr);
-					
-					//move to that block
-					while(this.width>target) {
-						while(pathBlockAcross(arr, right)) {
-							upArm1();
 						}
-						contractArm2();
 					}
-					for (int i = 0; i < arr.length; i++) {
-						System.out.println(Arrays.toString(arr[i]));
+				} else {
+					while (this.height - this.depth > colHeight(arr, right)) {
+						if (pathBlockedDown(arr)) {
+							while (this.height - this.depth > colHeight(arr, right)) {
+								downArm1();
+							}
+						} else {
+							lowerArm3();
+							counter++;
+						}
 					}
+				}
 
-					//move down to positing to pick up the block
-						//CHECK WHICH colHeight NEEDS TO BE USED
-					System.out.println(this.height-this.depth);
-					while(this.height-this.depth>colHeightBelow(arr)) {
-						if(pathBlockedDown(arr)) {
-							while(this.height-this.depth>colHeightBelow(arr)) {
+				// place block and update relevant information
+				robot.drop();
+				removeBlock = false;
+				System.out.println("Before "+arr[8][0]);
+				arr = updateArr(arr, blockSize, removeBlock);
+				System.out.println("After "+arr[8][0]);
+				System.out.println(arr[8][0]);
+				for (int i = 0; i < arr.length; i++) {
+					System.out.println(Arrays.toString(arr[i]));
+				}
+				this.depth = this.depth - blockSize;
+				blockSize = 0;
+				right = false;
+				noMoved++;
+				// move arm back into optimal position
+				while (counter > 0) {
+					raiseArm3();
+					{
+						counter--;
+					}
+				}
+
+				System.out.print("\nend Right\n-----");
+				// Move onto right
+
+				// next slide
+			} else {
+
+				System.out.print("\nStart Left\n-----\n");
+				// Find the block to pick up
+				System.out.println("Before target "+arr[9][0]);
+				target = findNextBlockLeft(arr, right);
+				System.out.println("Target Col: " + target);
+				// move to that block
+				while (this.width > target) {
+					while (pathBlockAcross(arr, right)) {
+						upArm1();
+					}
+					contractArm2();
+				}
+
+				// move down to positing to pick up the block
+				System.out.println(this.height - this.depth);
+				while (this.height - this.depth > colHeightBelow(arr)) {
+					if (pathBlockedDown(arr)) {
+						while (this.height - this.depth > colHeightBelow(arr)) {
+							lowerArm3();
+							counter++;
+						}
+					} else {
+						downArm1();
+
+					}
+				}
+				// pickup the block and update relevant info
+
+				robot.pick();
+				removeBlock = true;
+				blockSize = getBlockSize(arr);
+				this.depth = this.depth + blockSize;
+				arr = updateArr(arr, blockSize, removeBlock);
+				for (int i = 0; i < arr.length; i++) {
+					System.out.println(Arrays.toString(arr[i]));
+				}
+
+				// move the arm3 back up to optimal height
+				while (counter > 0) {
+					raiseArm3();
+					{
+						counter--;
+					}
+				}
+
+				// move to destination col
+				while (this.width > 1) {
+					while (pathBlockAcross(arr, right)) {
+						upArm1();
+					}
+					contractArm2();
+				}
+
+				// lower into place
+				// CHECK WHICH colHeight NEEDS TO BE USED
+				if (colHeightBelow(arr) < 1) {
+					while (this.height - this.depth > colHeight(arr, right)) {
+						if (pathBlockedDown(arr)) {
+							while (this.height + this.depth > colHeight(arr, right)) {
 								lowerArm3();
 								counter++;
 							}
-						}else {downArm1();
-							
+						} else {
+							downArm1();
 						}
 					}
-					//pickup the block and update relevant info
-					
-					robot.pick();
-					blockSize = getBlockSize(arr);
-					this.depth = this.depth + blockSize;
-					arr = updateArr(arr, blockSize);
-					
-					
-					//move the arm3 back up to optimal height
-					while(counter>0) {
-						raiseArm3();{
-							counter--;
-						}
-					}
-					
 
-					//move to destination col
-					while (this.width > 1) {
-						while(pathBlockAcross(arr, right)) {
-							upArm1();
-						}
-						contractArm2();
-					}
-					
-					//lower into place
-						//CHECK WHICH colHeight NEEDS TO BE USED
-					if (colHeightBelow(arr) < 1) {
-						while (this.height-this.depth>colHeight(arr, right)) {
-							if (pathBlockedDown(arr)) {
-								while (this.height + this.depth > colHeight(arr, right)) {
-									lowerArm3();
-									counter++;
-								}
-							} else {
-								downArm1();
+				} else {
+					while (this.height - this.depth > colHeightBelow(arr)) {
+
+						if (pathBlockedDown(arr)) {
+							while (this.height + this.depth > colHeightBelow(arr)) {
+								lowerArm3();
+								counter++;
 							}
-						}
-						
-					} else {
-						while (this.height-this.depth>colHeightBelow(arr)) {
-
-							if (pathBlockedDown(arr)) {
-								while (this.height + this.depth > colHeightBelow(arr)) {
-									lowerArm3();
-									counter++;
-								}
-							} else {
-								downArm1();
-							}
-						}
-
-					}
-
-					//place block and update relavent information
-					robot.drop();
-					arr = updateArr(arr, blockSize);
-					this.depth = this.depth-blockSize;
-					blockSize = 0;
-					right = true;
-					noMoved++;
-					
-					//move arm back into optimal position
-					while(counter>0) {
-						raiseArm3();{
-							counter--;
+						} else {
+							downArm1();
 						}
 					}
-					
-					System.out.print("\nend Left\n-----");
-					//restart the whooooooooole process
-					
-		}
-			
+
+				}
+
+				// place block and update relavent information
+				robot.drop();
+				removeBlock = false;
+				arr = updateArr(arr, blockSize, removeBlock);
+				this.depth = this.depth - blockSize;
+				blockSize = 0;
+				right = true;
+				noMoved++;
+
+				// move arm back into optimal position
+				while (counter > 0) {
+					raiseArm3();
+					{
+						counter--;
+					}
+				}
+
+				System.out.print("\nend Left\n-----");
+				// restart the whooooooooole process
+
+			}
+
 		}
 	}
 
 	private boolean pathBlockAcross(int[][] arr, boolean right) {
-		if(this.height-this.depth>maxHeight(arr)) {
-		return false;
-		}else {
-			if(this.height-this.depth<colHeight(arr, right)){
-			return true;
-			}else{
+		if (this.height - this.depth > maxHeight(arr)) {
 			return false;
-			}
-		}
-	}
-	
-	
-	private int colHeight(int[][] arr, boolean right) {
-		int colHeight=0;
-		if(right) {
-			if(this.width==10) {
-				if(arr[9].length<1) {
-					System.out.println("Col height: "+colHeight);
-					return colHeight;
-				}else {
-					for(int i = 0; i<arr[this.width-1].length;i++) {
-						colHeight = colHeight + arr[this.width-1][i];
-					}
-					System.out.println("Col height: "+colHeight);
-					return colHeight;
-				}
-			}else {
-		for(int i = 0; i<arr[this.width].length;i++) {
-			colHeight = colHeight + arr[this.width][i];
-		}
-		System.out.println("Col height: "+colHeight);
-		return colHeight;
-			}
-	}else {
-		if(this.width==1) {
-			for(int i =0; i<arr[0].length; i++) {
-				colHeight = colHeight + arr[this.width][i];
-			}
-			System.out.println("Col height: "+colHeight);
-			return colHeight;
-		}else {
-		for(int i = 0; i<arr[this.width-2].length;i++) {
-			System.out.println("Col height: "+colHeight);
-			colHeight = colHeight + arr[this.width-2][i];
-		}
-		System.out.println("Col height: "+colHeight);
-		return colHeight;
-	}
-	}
-		
-	}	
-
-	private int colHeightBelow(int[][] arr) {
-		int colHeight=0;
-
-		for(int i = 0; i<arr[this.width-1].length;i++) {
-			System.out.println("Col height: "+colHeight);
-			colHeight = colHeight + arr[this.width-1][i];
-		}
-		System.out.println("Col height"+(this.width-1)+": "+colHeight);
-		return colHeight;
-	}
-	
-	
-	private boolean pathBlockedDown(int[][]arr) {
-		System.out.println("Max Height : "+maxHeight(arr));
-		System.out.println("Arm1 Height : "+this.height);
-		System.out.println("arm3 Depth: "+this.depth);
-		if(this.height - this.depth > maxHeight(arr)) {
-			if(this.width>tallestCol(arr)) {
+		} else {
+			if (this.height - this.depth < colHeight(arr, right)) {
 				return true;
-			}else {
+			} else {
 				return false;
 			}
-			
-		}else {
-			return false;
 		}
 	}
 
-	private int[][] updateArr(int[][] arr, int blockSize) {
+	private boolean pathBlockedDown(int[][] arr) {
+		System.out.println("Max Height : " + maxHeight(arr));
+		System.out.println("Arm1 Height : " + this.height);
+		System.out.println("arm3 Depth: " + this.depth);
+		if (this.height - this.depth > maxHeight(arr)) {
+			if (this.width > tallestCol(arr)) {
+				return true;
+			} else {
+				return false;
+			}
+
+		} else
+			return false;
+	}
+
+	private int colHeight(int[][] arr, boolean right) {
+		int colHeight = 0;
+		if (right) {
+			if (this.width == 10) {
+				if (arr[9].length < 1) {
+					System.out.println("Col height: " + colHeight);
+					return colHeight;
+				} else {
+					for (int i = 0; i < arr[this.width - 1].length; i++) {
+						colHeight = colHeight + arr[this.width - 1][i];
+					}
+					System.out.println("Col height: " + colHeight);
+					return colHeight;
+				}
+			} else {
+				for (int i = 0; i < arr[this.width].length; i++) {
+					colHeight = colHeight + arr[this.width][i];
+				}
+				System.out.println("Col height: " + colHeight);
+				return colHeight;
+			}
+		} else {
+			if (this.width == 1) {
+				for (int i = 0; i < arr[0].length; i++) {
+					colHeight = colHeight + arr[this.width][i];
+				}
+				System.out.println("Col height: " + colHeight);
+				return colHeight;
+			} else {
+				for (int i = 0; i < arr[this.width - 2].length; i++) {
+					System.out.println("Col height: " + colHeight);
+					colHeight = colHeight + arr[this.width - 2][i];
+				}
+				System.out.println("Col height: " + colHeight);
+				return colHeight;
+			}
+		}
+
+	}
+
+	private int colHeightBelow(int[][] arr) {
+		int colHeight = 0;
+
+		for (int i = 0; i < arr[this.width - 1].length; i++) {
+			System.out.println("Col height: " + colHeight);
+			colHeight = colHeight + arr[this.width - 1][i];
+		}
+		System.out.println("Col height" + (this.width - 1) + ": " + colHeight);
+		return colHeight;
+	}
+
+	private int[][] updateArr(int[][] arr, int blockSize, boolean removeBlock) {
 		int[] temp;
 
 		if (this.width == 10 || this.width == 1) {
@@ -441,38 +450,68 @@ public class RobotControl implements Control {
 				arr[this.width - 1] = temp;
 				return arr;
 			} else {
-				temp = new int[(arr[this.width - 1].length) + 1];
+				if (removeBlock) {
+					temp = new int[(arr[this.width - 1].length - 1)];
+					for (int i = 0; i < temp.length; i++) {
+						if (i == temp.length - 1) {
+							temp[i] = blockSize;
+						} else {
+							temp[i] = arr[this.width - 1][i];
+
+						}
+					}
+					arr[this.width - 1] = temp;
+					return arr;
+				} else {
+					temp = new int[(arr[this.width - 1].length + 1)];
+					for (int i = 0; i < temp.length; i++) {
+						if (i == temp.length - 1) {
+							temp[i] = blockSize;
+						} else {
+							temp[i] = arr[this.width - 1][i];
+
+						
+					}
+					}
+					arr[this.width - 1] = temp;
+					return arr;
+
+				}
+			}
+		}
+		
+
+		else {
+			if (removeBlock) {
+				temp = new int[(arr[this.width - 1].length - 1)];
 				for (int i = 0; i < temp.length; i++) {
-					if (i == temp.length - 1) {
-						temp[i] = blockSize;
-					} else {
 						temp[i] = arr[this.width - 1][i];
 
 					}
-				}
+				
 				arr[this.width - 1] = temp;
+				System.out.println("remove is true "+(arr[this.width - 1].length - 1));
+				System.out.println("arr "+Arrays.toString(arr[this.width-1])+" its length is "+arr[this.width-1].length);
 				return arr;
-			}
-		}
+			} else {
+				temp = new int[(arr[this.width - 1].length) - 1];
+				{
+					for (int i = 0; i <= temp.length - 1; i++) {
 
-		else {
-			temp = new int[(arr[this.width - 1].length) - 1];
-			{
-				for (int i = 0; i <= temp.length - 1; i++) {
-
-					temp[i] = arr[this.width - 1][i];
-					System.out.println(arr[this.width - 1][i]);
+						temp[i] = arr[this.width - 1][i];
+						System.out.println(arr[this.width - 1][i]);
+					}
 				}
 			}
+
+			arr[this.width - 1] = temp;
+
+			for (int i = 0; i < arr.length; i++) {
+				System.out.println(Arrays.toString(arr[i]));
+			}
+
+			return arr;
 		}
-
-		arr[this.width - 1] = temp;
-
-		for (int i = 0; i < arr.length; i++) {
-			System.out.println(Arrays.toString(arr[i]));
-		}
-
-		return arr;
 	}
 
 	private int getBlockSize(int[][] arr) {
@@ -481,10 +520,9 @@ public class RobotControl implements Control {
 
 	}
 
-
 	private int maxHeight(int[][] arr) {
 		int maxHeight = 0;
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 9; i++) {
 			int newHeight = 0;
 			for (int z = 0; z < arr.length; z++) {
 				try {
@@ -503,7 +541,7 @@ public class RobotControl implements Control {
 	private int tallestCol(int[][] arr) {
 		int maxHeight = 0;
 		int colNum = 0;
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 9; i++) {
 			int newHeight = 0;
 			for (int z = 0; z < arr.length; z++) {
 				try {
@@ -529,45 +567,61 @@ public class RobotControl implements Control {
 				continue;
 
 			} else {
-				return x+1;
+				return x + 1;
 			}
 		}
 		return 0;
 	}
 
-	private int findNextBlockLeft(int[][] arr) {
+	private int findNextBlockLeft(int[][] arr, boolean right) {
 
-		int y = this.barHeights.length;
-		if(y<1) {
-			for (int x= 8; x> 1; x--) {
-				if(arr[x].length >=1) {
-					System.out.println("Target col: "+(x+1));
-					return x+1;
-				}
-			}
-		}else{
-			int z = 6;
-			for (int x= 8; x> 1; x--) {
-				int i = arr[x].length-1;
-				try{
-				if(arr[x].length >1) {
-					if(arr[x][i] != this.barHeights[y]) {
-						System.out.println("Target col: "+(x+1));
-						return x+1;
-				}else {
-					y--;
-					continue;
-				}catch (ArrayIndexOutOfBoundsException e) {
-					continue;
-				}
-				}
-		}	
+		for(int i = 0; i< arr.length; i++) {
+			System.out.println("Arr "+i+" length: " + arr[i].length);
 		}
 		
-	
-}
-	return 0;
-}
+		
+		if (this.barHeights.length < 1) {
+			System.out.println("no bar heights");
+			for (int x = 9; x > 1; x--) {
+				System.out.println("Arr "+(x-1)+" length: " + arr[x-1].length);
+				System.out.println(arr[x-1][0]);
+			if (arr[x-1][0]==0 && arr[x-1].length ==1){
+				System.out.println("no bar heights "+x);
+				continue;
+			} else {
+				
+				return x;
+				}
+			}
+		
+		}else {
+			
+			int z = 7;
+			for (int x = 9; x > 1; x--) {
+				if(arr[x-1].length==1) {
+				try {
+					if (arr[x-1][0] == this.barHeights[z]) {
+						z--;
+						continue;
+				} }catch (ArrayIndexOutOfBoundsException e) {
+					System.out.println("error caught");
+					if(arr[x-1][0]!=0) {
+						System.out.println("error caught if true");
+						return x-1;
+					}else {
+						z--;
+						continue;
+					}
+				}
+			}else {
+				System.out.println("length :"+arr[x-1].length);
+				System.out.println("here "+(x-1));
+				return x-1;
+			}
+		}
+		}System.out.println("Error");
+		return 0;
+	}
 
 	private void downArm1() {
 		robot.down();
@@ -585,17 +639,19 @@ public class RobotControl implements Control {
 	}
 
 	private void contractArm2() {
-			robot.contract();
-			this.width--;
-		}
+		robot.contract();
+		this.width--;
+	}
 
 	private void lowerArm3() {
-			robot.lower();
-			this.depth++;
-		}
-
-	private void raiseArm3() { 
-			robot.raise();
-			this.depth--;
-	
+		robot.lower();
+		this.depth++;
 	}
+
+	private void raiseArm3() {
+		robot.raise();
+		this.depth--;
+
+	}
+
+}
