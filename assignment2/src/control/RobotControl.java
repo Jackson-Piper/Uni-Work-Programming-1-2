@@ -513,7 +513,7 @@ public class RobotControl implements Control {
 				}
 			}
 			if (newHeight > maxHeight) {
-//				System.out.println("New Max Height" + newHeight);
+				System.out.println("New Max Height" + newHeight);
 				maxHeight = newHeight;
 				colNum = i;
 			}
@@ -545,22 +545,28 @@ public class RobotControl implements Control {
 					return x+1;
 				}
 			}
-		}
+		}else{
+			int z = 6;
 			for (int x= 8; x> 1; x--) {
-		int i = arr[x].length-1;	
+				int i = arr[x].length-1;
+				try{
+				if(arr[x].length >1) {
+					if(arr[x][i] != this.barHeights[y]) {
+						System.out.println("Target col: "+(x+1));
+						return x+1;
+				}else {
+					y--;
+					continue;
+				}catch (ArrayIndexOutOfBoundsException e) {
+					continue;
+				}
+				}
+		}	
+		}
 		
-		if(arr[x].length >1) {
-			if(arr[x][i] != this.barHeights[y]) {
-				System.out.println("Target col: "+(x+1));
-				return x+1;
-			}else {
-				y--;
-				continue;
-			}
-		}
-		}
-		return 0;
 	
+}
+	return 0;
 }
 
 	private void downArm1() {
