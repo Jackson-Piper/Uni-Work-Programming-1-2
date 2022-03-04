@@ -442,17 +442,17 @@ public class RobotControl implements Control {
 	}
 
 	private int[][] updateArr(int[][] arr, int blockSize, boolean removeBlock) {
-		int[] temp;
+		
 
-		if (this.width == 10 || this.width == 1) {
-			if (arr[this.width - 1].length < 1) {
-				temp = new int[] { blockSize };
+		if (removBlock == false) {
+			if (arr[this.width - 1].length = 0) {
+			int[] temp = new int[] { blockSize };
 				arr[this.width - 1] = temp;
 				return arr;
 			} else {
-				if (removeBlock) {
-					temp = new int[(arr[this.width - 1].length - 1)];
-					for (int i = 0; i < temp.length; i++) {
+				System.ou.println("New arr size: "+arr[this.width - 1].length)
+			  int[]	temp = new int[(arr[this.width - 1].length)];
+				for (int i = 0; i < temp.length; i++) {
 						if (i == temp.length - 1) {
 							temp[i] = blockSize;
 						} else {
@@ -462,57 +462,20 @@ public class RobotControl implements Control {
 					}
 					arr[this.width - 1] = temp;
 					return arr;
-				} else {
-					temp = new int[(arr[this.width - 1].length + 1)];
-					for (int i = 0; i < temp.length; i++) {
-						if (i == temp.length - 1) {
-							temp[i] = blockSize;
-						} else {
-							temp[i] = arr[this.width - 1][i];
-
-						
-					}
-					}
-					arr[this.width - 1] = temp;
-					return arr;
-
-				}
-			}
 		}
 		
 
 		else {
-			if (removeBlock) {
-				temp = new int[(arr[this.width - 1].length - 1)];
+			
+			temp = new int[(arr[this.width - 1].length - 1)];
 				for (int i = 0; i < temp.length; i++) {
 						temp[i] = arr[this.width - 1][i];
 
 					}
 				
 				arr[this.width - 1] = temp;
-				System.out.println("remove is true "+(arr[this.width - 1].length - 1));
-				System.out.println("arr "+Arrays.toString(arr[this.width-1])+" its length is "+arr[this.width-1].length);
 				return arr;
-			} else {
-				temp = new int[(arr[this.width - 1].length) - 1];
-				{
-					for (int i = 0; i <= temp.length - 1; i++) {
-
-						temp[i] = arr[this.width - 1][i];
-						System.out.println(arr[this.width - 1][i]);
-					}
-				}
-			}
-
-			arr[this.width - 1] = temp;
-
-			for (int i = 0; i < arr.length; i++) {
-				System.out.println(Arrays.toString(arr[i]));
-			}
-
-			return arr;
 		}
-	}
 
 	private int getBlockSize(int[][] arr) {
 		System.out.println("Blocksize = " + arr[this.width - 1][(arr[this.width - 1].length - 1)]);
@@ -582,10 +545,10 @@ public class RobotControl implements Control {
 		
 		if (this.barHeights.length < 1) {
 			System.out.println("no bar heights");
-			for (int x = 9; x > 1; x--) {
-				System.out.println("Arr "+(x-1)+" length: " + arr[x-1].length);
-				System.out.println(arr[x-1][0]);
-			if (arr[x-1][0]==0 && arr[x-1].length ==1){
+			for (int x = 8; x > 0; x--) {
+				System.out.println("Arr "+(x)+" length: " + arr[x].length);
+				System.out.println(arr[x][0]);
+			if (arr[x][0]==0 && arr[x].length ==1){
 				System.out.println("no bar heights "+x);
 				continue;
 			} else {
@@ -597,8 +560,10 @@ public class RobotControl implements Control {
 		}else {
 			
 			int z = 7;
-			for (int x = 9; x > 1; x--) {
-				if(arr[x-1].length==1) {
+			for (int x = 8; x > 0; x--) {
+				if(arr[x].length>=1 && x-1 != this.barHeights.length) {
+					return x;
+				}else{
 				try {
 					if (arr[x-1][0] == this.barHeights[z]) {
 						z--;
