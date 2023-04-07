@@ -1,5 +1,8 @@
 public class login{
     public void main(String[] Args){
+    mainMenu()
+    }
+        public void mainMenu(){
         System.out.println("1)\tLog In");
         System.out.println("2)\tCreate an Account");
         System.out.println("3)\tExit");
@@ -49,7 +52,7 @@ public class login{
         System.out.println("3)\tCreate a Record");
         System.out.println("4)\tEdit Record");
         System.out.println("5)\tExit");
-        System.out.println("6)\Log Out");
+        System.out.println("6)\tLog Out");
          System.out.println("--------------------");
     }
 
@@ -60,16 +63,73 @@ public class login{
             case "1"{
                 userDetails(user);
             }
+            case "2"{
+                viewRecords(user);
+            }
+            case "3"{
+                createRecord(user);
+            }
+            case "4"{
+                editRecord(user);
+            }
+            case "5"{
+                System.exit(0);
+            }
+            case "6"{
+                mainMenu();
+            }
         }
     }
 
     public void userDetails(User user){
          System.out.println("User Name : \t" + user.getUserName());
          System.out.printlm("First Name: \t"+ user.getFirstName());
-         System.out.println("Surname: \t"+ user.getSurname);
+         System.out.println("Surname: \t"+ user.getSurname());
          System.out.println("Edit? [Y/N]");
          String nav = sc.nextline();
-          
+         switch(nav){
+            case "y""Y"{
+                System.out.println("1)\t First Name");
+                System.out.println("2)\t Surname");
+                System.out.printlm("3)\t Back")
+                System.out.println("--------------------");
+                System.out.println("Please select one to edit: ");
+                nav = sc.nextLine();
+                switch (nav){
+                    case "1"{
+                        editName(user);
+                        userDetails(user);
+                    }
+                    case "2"{
+                        editSurname(user);
+                        userDeatils(user);
+                    }
+                    case "3"{
+                        userDeatils(user);
+                    }
+                }
+               }
+               case "N""n"{
+                login(user);
+               }
+            }
+         }
+    }
+
+    public void editName(User user){
+        System.out.println("Change "+user.getName()+" to");
+        String name = sc.nextLine();
+        user.setName(name);
+    }
+
+    public void editSurname(User user){
+        System.out.println("Change "+user.getSurname()+" to");
+        String name = sc.nextLine();
+        user.setSurname(name);
+    }
+
+    public void viewRecords(User user){
+        System.out.println(user.getPrintRecords())
     }
 
 }
