@@ -129,7 +129,11 @@ public class login{
     }
 
     public void viewRecords(User user){
-        System.out.println(user.getPrintRecords())
+        System.out.println(user.getPrintRecords());
+    }
+
+    public User findUser(String username){
+        
     }
 
 }
