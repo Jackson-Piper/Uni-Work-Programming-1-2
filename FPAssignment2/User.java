@@ -14,7 +14,7 @@ public class User{
         this.Surname = Surname;
     }
 
-    public String getUserName(){
+    public String getUsername(){
         return username;
     }
 

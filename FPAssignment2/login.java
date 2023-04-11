@@ -32,7 +32,7 @@ public class login{
                 System.out.println("Please enter your surname: ");
                 String surname = sc.nextLine();
                 int userID = getNextID();
-                User newUser = new User(userID,username, password, firstName, lastName);
+                User newUser = new Users(userID,username, password, firstName, lastName);
                 user.add(newUser);
                 login(newUser)
             }
@@ -133,7 +133,10 @@ public class login{
     }
 
     public User findUser(String username){
-        
+        for (User user : Users){
+            if(username.equals(user.getUsername))
+            r
+        }
     }
 
 }
