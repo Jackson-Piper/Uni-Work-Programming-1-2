@@ -103,7 +103,7 @@ public class login{
 
 
 
-    editRecord(){
+    public void editRecord(){
         System.out.println("--------------------");
         System.out.println("Please enter the Record ID: ")
         String recordIDTemp = sc.nextLine();
@@ -113,7 +113,55 @@ public class login{
             System.out.println("Returning to the menu")
             login();
         }
-        System.out.println()
+        Record edit = getSpecificRecord(recordIDTemp);
+
+        Double weight = edit.getWeight();
+        Double tempreture = edit.getTempreture();
+        Double bloodPresure = edit.getBloodPresure()
+        String note = edit.getNote();
+        System.out.println("Edit Weight "+edit.getWeith()+"(Kg) [Y/N]: ");
+        String nav = sc.nextLine();
+        if(yesVal(nav)){
+        System.out.println("Weight: ");
+        weight = sc.nextLine();
+        }
+        System.out.println("Edit Tempreture "+edit.getTempreture()+"(Celcius) [Y/N]: ");
+        if(yesVal(nav)){
+        System.out.println("Tempreture: ");
+        tempreture = sc.nextLine();
+        }
+        System.out.println("Edit Blood pressure "+edit.getBloodPressure()+"(mmHg) [Y/N]: ");
+        if(yesVal(nav)){
+        System.out.println("Blood Pressure: ");
+        bloodPresure = sc.nextLine();
+        }
+        System.out.println("Edit Note :"+edit.getNote+"(50 Words) [Y/N]:");
+        if(yesVal(nav)){
+        System.out.println("Note: ");
+        note = sc.nextLine();
+        }
+
+         System.out.println("--------------------------");
+        System.out.println("Record:\t"+edit.getRecordID());
+        System.out.println("Weight:\t"+weight);
+        System.out.println("Tempreture:\t"+tempreture);
+        System.out.println("Blood Presure:\t"+bloodPresure);
+        System.out.println("Note:\t"+note);
+        System.out.println("Date:\t"+edit.getDate());
+        System.out.println("--------------------------");
+        System.out.println("Would you like to save the changes [Y/N]");
+         String commit = sc.nextLine();
+        if(isYes(commit)){
+        edit.updateRecord(weight,tempreture,bloodPresure,note)
+        System.out.println("Reccord Sucessfully edited");
+        System.out.println("Reeturning to menu");
+        login();
+        }else{
+            System.out.println("Record changes discarded");
+            System.out.println("Returning to menu");
+        }
+        
+
     }
 
     public void createRecord(){
@@ -150,11 +198,12 @@ public class login{
         System.out.println("Tempreture:\t"+tempreture);
         System.out.println("Blood Presure:\t"+bloodPresure);
         System.out.println("Note:\t"+note);
+        System.out.println("Date:\t"+date);
         System.out.println("--------------------------");
         System.out.println("Would you like to add this record [Y/N]");
         String commit = sc.nextLine();
         if(isYes(commit)){
-        Record newRecord = new Record(weight, tempreture, bloodPresure, note);
+        Record newRecord = new Record(weight, tempreture, bloodPresure, note, date);
         currentUser.addNewRecord(newRecord);
         System.out.println("Reccord Sucessfully added");
         System.out.println("Reeturning to menu");
