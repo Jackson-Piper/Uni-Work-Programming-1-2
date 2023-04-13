@@ -72,7 +72,7 @@ public class login{
         System.out.println("4)\tEdit Record");
         System.out.println("5)\tExit");
         System.out.println("6)\tLog Out");
-         System.out.println("--------------------");
+        System.out.println("--------------------");
     }
 
     public void login(){
@@ -99,6 +99,21 @@ public class login{
                 mainMenu();
             }
         }
+    }
+
+
+
+    editRecord(){
+        System.out.println("--------------------");
+        System.out.println("Please enter the Record ID: ")
+        String recordIDTemp = sc.nextLine();
+        if(!validRecord(recordIDTemp)){
+            System.out.println("--------------------");
+            System.out.println("No record matching that ID")
+            System.out.println("Returning to the menu")
+            login();
+        }
+        System.out.println()
     }
 
     public void createRecord(){
@@ -148,8 +163,6 @@ public class login{
             System.out.println("Record Deleted");
             System.out.println("Returning to menu");
         }
-
-
     }
 
     public void userDetails(){
