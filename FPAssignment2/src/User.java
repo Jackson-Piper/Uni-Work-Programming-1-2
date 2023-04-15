@@ -1,10 +1,12 @@
-public class User{
+public class User implements userInterface{
 
     private string userID;
     private string username;
     private string password;
     private string firstName;
     private string Surname;
+    ArrayList<record> records = new ArrayList<>();
+
 
     public class user(String userID, String username, String password, String firstName, String Surname){
         this.userID = userID;
@@ -38,6 +40,30 @@ public class User{
         return password;
     }
 
+    //interface methods
+    public void editProfile (firstName, lastName){
+        setName(firstName);
+        setSurname(lastName);
+    }
+
+    public void createRecord (newrecord){
+        records.add(newRecord);
+    }
+
+    public void editRecord (updatedRecord){
+        String recordID = updatedRecord.getID();
+        records.getRecord(recordID).updateRecord(updatedRecord);
+    }
+
+    public void deleteRecord (recordForDeletion){
+        records.remove(getIndexOf(recordForDeletion));
+    }
+
+
+    //needs to be completed
+    public void exportRecords(){
+        
+    }
 
 
 
