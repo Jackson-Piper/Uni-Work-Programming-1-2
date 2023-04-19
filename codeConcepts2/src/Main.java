@@ -32,18 +32,26 @@ public class Main {
     }
 
     public static void serialize(Account obj, String fileName) throws Exception {
-        // START
-        // TODO: Serialise the Account instance into a file with the given file name
-        // ... Your code goes here ...
-        // FINISH
+        try{
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
+            out.writeObject(obj);
+            out.close();
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     public static Account deserialize(String fileName) throws Exception {
-        // START
-        // TODO: Deserialise the Account instance from the file and return the Account instance
-        // ... Your code goes here ...
-        // ... Replace return statement with your code ...
-        return null;
+       Account obj;
+        try{
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
+            obj = (Account) in.readObject();
+            in.close();
+        }catch(IOException | ClassNotFoundException e){
+            e.printStackTrace();
+        }
+        return obj;
         // FINISH
     }
 
