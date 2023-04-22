@@ -1,4 +1,9 @@
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 // TODO: Add appropriate imports here
 
 public class Main {
@@ -43,9 +48,11 @@ public class Main {
     }
 
     public static Account deserialize(String fileName) throws Exception {
-       Account obj;
+       Account obj = null;
         try{
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
+        	FileInputStream file = new FileInputStream(fileName);
+        	
+            ObjectInputStream in = new ObjectInputStream(file);
             obj = (Account) in.readObject();
             in.close();
         }catch(IOException | ClassNotFoundException e){
