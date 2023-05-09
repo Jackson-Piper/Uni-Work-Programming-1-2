@@ -1,0 +1,66 @@
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+
+public class ErrorPopup extends Stage {
+    
+    public ErrorPopup(String errorMessage) {
+        // Create the label to display the error message
+        Label errorLabel = new Label(errorMessage);
+        errorLabel.setWrapText(true);  // Allow text to wrap if it's too long
+        
+        // Create the "OK" button to close the window
+        Button okButton = new Button("OK");
+        okButton.setOnAction(e -> close());
+        
+        // Create a GridPane to lay out the contents of the window
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(10));
+        grid.add(errorLabel, 0, 0);
+        grid.add(okButton, 0, 1);
+        
+        // Set up the scene and show the window
+        Scene scene = new Scene(grid);
+        setScene(scene);
+        setTitle("Error");
+        setResizable(false);
+        sizeToScene();
+        centerOnScreen();
+    }
+}
+
+public static boolean validateInput(String email, String name, LocalDate date) {
+    if (!validateEmail(email)) {
+        System.out.println("Invalid email address");
+        return false;
+    }
+    if (!validateString(name)) {
+        System.out.println("Name is required");
+        return false;
+    }
+    if (!validateDate(date)) {
+        System.out.println("Date must be before today's date");
+        return false;
+    }
+    return true;
+}
+
+public static boolean validateString(String str) {
+    return str != null && str.length() > 0;
+}
+public static boolean validateDate(LocalDate date) {
+    return date != null && date.isBefore(LocalDate.now());
+}
+public static boolean validateEmail(String email) {
+    // regular expression to validate email format
+    String regex = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
+    return email.matches(regex);
+}
+

@@ -20,6 +20,7 @@ public class Controller {
 	BorderPane root;
 	private MainMenuBar menuBar;
 	RecordsTable recordsTable;
+	ArrayList<User> Users;
 
 	public Controller(Stage primaryStage) {
 		this.primaryStage = primaryStage;
@@ -27,6 +28,7 @@ public class Controller {
 		root = new BorderPane();
 		this.menuBar = new MainMenuBar(this);
 		this.recordsTable = new RecordsTable();
+		// Users = deserialize("userList.dat");
 		LoginScreen();
 	}
 
@@ -162,11 +164,15 @@ public class Controller {
 			 String highBP = cr.getHighBP();
 			 String lowBP = cr.getLowBP();
 			 String note = cr.getNote();
+			 if(validateRecordInput( weight,  temp,  highBP,  lowBP,  note)==null){
+				showErrorPopup(error);
+			 }else{
 			 System.out.println("7");
 			 user.createRecord(weight, temp, highBP, lowBP, note);
 			 System.out.println("8");
 			 createRecordScreen();
 			 showSaved();
+			 }
 		});
 		}
 	
@@ -187,7 +193,7 @@ public class Controller {
 		table.setOnMouseClicked(event -> {
 	        if (event.getClickCount() == 2 && table.getSelectionModel().getSelectedItem() != null) {
 	            Model.HealthRecord selectedRecord = (Model.HealthRecord) table.getSelectionModel().getSelectedItem();
-	            editPopUp(selectedRecord);
+	            editSpecificRecord(selectedRecord);
 	        }
 	    });
 	}
@@ -215,25 +221,32 @@ public class Controller {
 		ConfirmDelete cd = new ConfirmDelete();
         cd.prep(selectedRecord);
         cd.start(primaryStage);
-        cd.no.setOnAction(event ->{ 
-        cd.popupStage.close();
+		this.root= cd.getRoot();
+		this.root.setTop(menuBar.getMenuBar());
+		Scene scene = new Scene(this.root, 500, 500);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+        cd.back.setOnAction(event ->{ 
         deleteRecrods();
 	});
-        cd.yes.setOnAction(event ->{
-        	cd.popupStage.close();
+        cd.delete.setOnAction(event ->{
         	user.deleteRecord(selectedRecord);
         	deleteRecrods();
 
         });
 	}
 	
-	private void editPopUp(HealthRecord selectedRecord) {
-		EditPopUp ed = new EditPopUp();
+	private void SpecificRecord(HealthRecord selectedRecord) {
+		EditSpecRecord ed = new EditSpecRecord();
 		ed.prep(selectedRecord);
 		ed.start(primaryStage);
+		this.root = ed.getRoot();
+		this.root.setTop(menuBar.getMenuBar());
+		Scene scene = new Scene(this.root, 500, 500);
+		primaryStage.setScene(scene);
+		primaryStage.show();
 	       ed.no.setOnAction(event ->{ 
-	           ed.popupStage.close();
-	           deleteRecrods();
+	           editRecord();
 	   	});
 	           ed.yes.setOnAction(event ->{
 	        	 String weight = ed.getWeight();
@@ -241,12 +254,12 @@ public class Controller {
 	  			 String highBP = ed.getHighBP();
 	  			 String lowBP = ed.getLowBP();
 	  			 String note = ed.getNote();
-	           	ed.popupStage.close();
-	           	System.out.println("before change");
+	           	if(validateRecordInput( weight,  temp,  highBP,  lowBP,  note)==null){
+				showErrorPopup(error);
+				SpecificRecord(selectedRecord);
+			 }else{
 	           	user.editRecord(selectedRecord,weight, temp, highBP, lowBP, note);
-	           	
 	           	editRecord();
-
 	           });
 	   	}
 	
@@ -297,6 +310,7 @@ public class Controller {
 		            break;
 		        case "Profile Logout":
 		        	this.user = null;
+					serialize(Users, "userList.dat");
 		        	LoginScreen();
 		        	System.out.println("About");
 		        	break;
@@ -304,6 +318,80 @@ public class Controller {
 		            break;
 		    }
 		}
+
+		private String validateRecordInput(String weight, String temp, String highBp, String lowBp, String note) {
+    // Validate the weight input
+    try {
+        Double.parseDouble(weight);
+    } catch (NumberFormatException e) {
+        return "Weight must be a valid decimal number";
+    }
+    
+    if (ouble.parseDouble(weightStr) <= 0) {return 
+        return "Weight must be greater than zero";
+    }
+
+    //Validate the Temp input
+    try {
+        Double.parseDouble(temp);
+    } catch (NumberFormatException e) {
+        return "Temp must be a valid integer";
+    if (Double.parseDouble(tempStr) <= 0) {
+        return "Temp must be greater than zero";
+    }
+
+    // Validate the highBp input
+     try {
+        Integer.parseInt(highBp);
+    } catch (NumberFormatException e) {
+        return "High BP must be a valid integer";
+    }
+    if (hiInteger.parseInt(highBp);ghBp <= 0) {
+        return "High BP must be greater than zero";
+    }
+
+    // Validate the lowBp input
+    try {
+        Integer.parseInt(lowBp);
+        return true;
+    } catch (NumberFormatException e) {
+        return "Low BP must be a valid integer";
+    }
+    if (Integer.parseInt(lowBp); <= 0) {
+        return "Low BP must be greater than zero";
+    }
+
+    // Validate the note input
+    if (note.length() > 50) {
+        return "Note must be no more than 50 characters long";
+    }
+
+    return null;  // Input is valid
+}
+
+
+		 public static void serialize(ArrayList<User> userList, String fileName) throws Exception {
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
+            out.writeObject(userList);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+		public static ArrayList<User> deserialize(String fileName) throws Exception {
+        ArrayList<User> userList = null;
+        try {
+            FileInputStream file = new FileInputStream(fileName);
+            ObjectInputStream in = new ObjectInputStream(file);
+            userList = (ArrayList<User>) in.readObject();
+            in.close();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return userList;
+    }
 }
 
 

@@ -12,7 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class EditPopUp extends Application {
+public class EditSpecRecord extends Application {
 	public BorderPane root;
 	public Button yes;
 	public Button no;
@@ -22,98 +22,79 @@ public class EditPopUp extends Application {
 	private TextField HighBP;
 	private TextField LowBP;
 	private TextField Note;
-	public void prep(HealthRecord selectedRecord) {
-			Text confirm = new Text("Please Edit as Needed");
-		 	Text Date = new Text ("Date : \t"+ selectedRecord.getDate());
-		    Text Weight = new Text ("Weight");
-		    Text Temp = new Text("Temp");
-		    Text HighBP = new Text("HighBP");
-		    Text LowBP = new Text("LowBP");
-		    Text Note = new Text("Note");
-		    
-		    this.Weight = new TextField();
-		    this.Weight.setText(selectedRecord.getWeight());
-
-		    this.Temp = new TextField();
-		    this.Temp.setText(selectedRecord.getTemp());
-
-		    this.HighBP = new TextField();
-		    this.HighBP.setText(selectedRecord.getHighBP());
-
-		    this.LowBP = new TextField();
-		    this.LowBP.setText(selectedRecord.getLowBP());
-
-		    this.Note = new TextField();
-		    this.Note.setText(selectedRecord.getNote());
-
-		   
-		    GridPane info = new GridPane();
-		    info.add(confirm, 0, 0);
-		    info.add(Date, 0, 1);
-		    info.add(Weight, 0, 2);
-		    info.add(Temp, 0, 3);
-		    info.add(HighBP, 0, 4);
-		    info.add(LowBP, 0, 5);
-		    info.add(Note, 0, 6); 
-		  
-		    info.add(this.Weight,2,3,1,1);
-		    info.add(this.Temp,2,4,1,1);
-		    info.add(this.HighBP,2,5,1,1);
-		    info.add(this.LowBP,2,6,1,1);
-		    info.add(this.Note,2,7,1,1);
-		    
-		    this.yes= new Button("Yes");
-		    this.no= new Button("No");
-		    
-		    GridPane gpButton = new GridPane(); 
-		    gpButton.add(yes, 0, 0);
-		    gpButton.add(no, 1, 0);
-		    gpButton.setHgap(10);
-		    gpButton.setVgap(15);
-		   
-
-		    BorderPane bp = new BorderPane();
-		    bp.setCenter(info);
-		    info.setAlignment(Pos.CENTER);
-		    BorderPane.setAlignment(info,Pos.CENTER);
-		    bp.setBottom(gpButton);
-		    BorderPane.setMargin(gpButton, new Insets(10));
-		    BorderPane.setAlignment(gpButton, Pos.CENTER);;
-		    this.root = bp;
-	}
 
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(Stage primaryStage){
+	BorderPane bp = new BorderPane();
+    primaryStage.setTitle("My Medical - Record - Edit");
+    bp.setCenter(getPage());
+    save = new Button();
+    save.setText("Save");
+	back = new Button();
+	back.setText("Back")
+    GridPane gp = new GridPane();
+    gp.add(save, 0, 0);
+	gp.add(back, 1, 0);
+	gp.setHgap(10);
+	gp.setVgap(15);
 
-		this.popupStage = new Stage();
-
-	    Scene scene = new Scene(this.root, 300, 300);
-	    this.popupStage.setScene(scene);
-
-	    this.popupStage.setTitle("Confirm Deletion");
-	    this.popupStage.centerOnScreen();
-	    this.popupStage.show();
+    GridPane.setHalignment(HPos.CENTER);
+    gp.setAlignment(Pos.CENTER);
+    bp.setBottom(gp);
+    this.root = bp;
 	}
 
-	public String getWeight() {
-		return Weight.getText();
+	public void prep(HealthRecord selectedRecord){
+		this.Date = new Label();
+		this.Date.setText(selectedRecord.getDate());
+		
+		this.Weight = new TextField();
+	    this.Weight.setText(selectedRecord.getWeight());
+	    
+		this.Temp = new TextField();
+	    this.Temp.setText(selectedRecord.getTemp());
+
+	    this.HighBP = new TextField();
+	    this.HighBP.setText(selectedRecord.getHighBP());
+
+	    this.LowBP = new DatePicker();
+	    this.LowBP.setValue(selectedRecord.getlowBP());
+
+		this.Note = new TextField();
+		this.Note.setText(selectedRecord.getNote());
+
 	}
+
+	public GridPane getPage() {
+		Text date = new Text("Date:");
+		Text Weight = new Text ("Weight:");
+	    Text Temp = new Text("Temp:");
+	    Text HighBP = new Text("HighBP:");
+	    Text LowBP = new Text("LowBP:");
+		Text Note = new Note("Note:")
+	    
 	
-	public String getTemp() {
-		return Temp.getText();
-	}
-	
-	public String getHighBP() {
-		return HighBP.getText();
-	}
-	
-	public String getLowBP() {
-		return LowBP.getText();
-	}
-	
-	public String getNote() {
-		return Note.getText();
-	}
+	    GridPane gp = new GridPane();
+	    gp.add(Date, 0,0,1,1);
+	    gp.add(Weight,0,1,1,1);
+	    gp.add(Temp,0,2,1,1);
+	    gp.add(HighBP,0,3,1,1);
+		gp.add(LowBP,0,4,1,1);
+		gp.add(Note,0,5,1,1);
+	    
+	    gp.add(this.Date,1,0,1,1);
+		gp.add(this.Weight,1,1,1,1);
+		gp.add(this.Temp,1,2,1,1);
+		gp.add(this.HighBP,1,3,1,1);
+		gp.add(this.LowBP,1,4,1,1);
+		gp.add(this.Note,1,5,1,1);
 
+	    gp.setAlignment(Pos.CENTER);
+	    gp.setHgap(10);
+	    gp.setVgap(15);
+	    
+	    
+	    return gp;
+	}
 }
-
+			

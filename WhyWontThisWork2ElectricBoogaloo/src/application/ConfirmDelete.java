@@ -25,18 +25,19 @@ import javafx.scene.text.Text;
 
 public class ConfirmDelete extends Application {
 	public BorderPane root;
-	public Button yes;
-	public Button no;
-	public Stage popupStage;
+	public Button delete;
+	public Button back;
+
 	public void prep(HealthRecord selectedRecord) {
-			Text confirm = new Text("Please confirm you want to delete this record");
-		 	Text Date = new Text ("Date : \t"+ selectedRecord.getDate());
-		    Text Weight = new Text ("Weight : \t"+selectedRecord.getWeight());
-		    Text Temp = new Text("Temp : \t"+selectedRecord.getTemp());
-		    Text HighBP = new Text("HighBP : \t"+selectedRecord.getHighBP());
-		    Text LowBP = new Text("LowBP : \t"+selectedRecord.getLowBP());
-		    Text Note = new Text("Note : \t"+selectedRecord.getNote());
-		    GridPane info = new GridPane();
+		 	this.Date = new Text ("Date : \t"+ selectedRecord.getDate());
+		    this.Weight = new Text ("Weight : \t"+selectedRecord.getWeight());
+		    this.Temp = new Text("Temp : \t"+selectedRecord.getTemp());
+		    this.HighBP = new Text("HighBP : \t"+selectedRecord.getHighBP());
+		    this.LowBP = new Text("LowBP : \t"+selectedRecord.getLowBP());
+		    this.Note = new Text("Note : \t"+selectedRecord.getNote());
+	}
+	public GridPane getPage() {    
+			GridPane info = new GridPane();
 		    info.add(confirm, 0, 0);
 		    info.add(Date, 0, 1);
 		    info.add(Weight, 0, 2);
@@ -44,37 +45,35 @@ public class ConfirmDelete extends Application {
 		    info.add(HighBP, 0, 4);
 		    info.add(LowBP, 0, 5);
 		    info.add(Note, 0, 6);
-		    this.yes= new Button("Yes");
-		    this.no= new Button("No");
-		    
-		    GridPane gpButton = new GridPane(); 
-		    gpButton.add(yes, 0, 0);
-		    gpButton.add(no, 1, 0);
-		    gpButton.setHgap(10);
-		    gpButton.setVgap(15);
-		   
-
-		    BorderPane bp = new BorderPane();
-		    bp.setCenter(info);
-		    info.setAlignment(Pos.CENTER);
-		    BorderPane.setAlignment(info,Pos.CENTER);
-		    bp.setBottom(gpButton);
-		    BorderPane.setMargin(gpButton, new Insets(10));
-		    BorderPane.setAlignment(gpButton, Pos.CENTER);;
-		    this.root = bp;
+		    info.setHgap(10);
+		    info.setVgap(15);
+			info.setAllignment(Pos.CENTER)
+			return info;
 	}
 
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(Stage primaryStage){
+	BorderPane bp = new BorderPane();
+    primaryStage.setTitle("My Medical - Record - Delete");
+    bp.setCenter(getPage());
+    delete = new Button();
+    delete.setText("delete");
+	back = new Button();
+	back.setText("Back")
+    GridPane gp = new GridPane();
+    gp.add(save, 0, 0);
+	gp.add(back, 1, 0);
+	gp.setHgap(10);
+	gp.setVgap(15);
 
-		this.popupStage = new Stage();
+    GridPane.setHalignment(HPos.CENTER);
+    gp.setAlignment(Pos.CENTER);
+    bp.setBottom(gp);
+    this.root = bp;
+	}
 
-	    Scene scene = new Scene(this.root, 300, 300);
-	    this.popupStage.setScene(scene);
-
-	    this.popupStage.setTitle("Confirm Deletion");
-	    this.popupStage.centerOnScreen();
-	    this.popupStage.show();
+	public BorderPane getRoot(){
+		return this.root;
 	}
 
 }
