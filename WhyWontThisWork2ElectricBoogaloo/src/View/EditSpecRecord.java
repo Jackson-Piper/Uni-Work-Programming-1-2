@@ -41,7 +41,7 @@ public class EditSpecRecord extends Application {
 	gp.setHgap(10);
 	gp.setVgap(15);
 
-    GridPane.setHalignment(gp,HPos.CENTER);
+    gp.setHalignment(HPos.CENTER);
     gp.setAlignment(Pos.CENTER);
     bp.setBottom(gp);
     this.root = bp;
@@ -80,7 +80,7 @@ public class EditSpecRecord extends Application {
 	    GridPane gp = new GridPane();
 	    gp.add(date, 0,0,1,1);
 	    gp.add(Weight,0,1,1,1);
-	    gp.add(Temp,0,2,1,1);
+	    gp.add(Te mp,0,2,1,1);
 	    gp.add(HighBP,0,3,1,1);
 		gp.add(LowBP,0,4,1,1);
 		gp.add(Note,0,5,1,1);

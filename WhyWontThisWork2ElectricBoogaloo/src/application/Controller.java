@@ -213,7 +213,6 @@ public class Controller {
 	}
 
 	private HealthRecord getRecord(String recordID) {
-		
 		for (HealthRecord record : user.getRecords()) {
 			if(record.getID().equals(recordID)) {
 				return record;
@@ -268,6 +267,26 @@ public class Controller {
 				confirmDelete(selectedRecord);
 			}
 		});
+	}
+
+	private void exportRecordScreen(){
+		ExportScreen ex = new ExportScreen();
+		ex.start(primaryStage);
+		this.root = ex.getRoot();
+		this.root.setTop(menuBar.getMenuBar());
+		Scene = new Scene(this.root, 500, 500);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		ex.export.setOnAction(Event ->{
+			if(ex.getFileType.equals(".csv")){
+				exportCSVFile(ex.getLocation());
+			}else if(ex.getFileType.equals(".dat")){
+				exportSerliazeFile(ex.getLocation());
+			}else {
+				exportTextFile
+			}
+			exportRecord(ex.getLocation(), ex.getFileType());
+		})
 	}
 
 	private void confirmDelete(HealthRecord selectedRecord) {
@@ -350,6 +369,7 @@ public class Controller {
 			break;
 		case "Records Export":
 			System.out.println("Export Records");
+			exportRecordScreen();
 			break;
 		case "Profile View":
 			System.out.println("View Profile");
@@ -361,12 +381,6 @@ public class Controller {
 			break;
 		case "Profile Logout":
 			this.user = null;
-			try {
-//				serialize(Users, "userList.dat");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			LoginScreen();
 			System.out.println("About");
 			break;
@@ -389,13 +403,17 @@ public class Controller {
 		} catch (NumberFormatException e) {
 			return "Temp must be a valid integer";
 		}
-
+		//Validate safe levels for tempreture
+		if(Double.parseDouble(temp)>39 || Double.parseDouble(temp)<35){
+			return "Please seek medical Attention for abnormal Tempreture";
+		}
 		// Validate the highBp input
 		try {
 			Integer.parseInt(highBp);
 		} catch (NumberFormatException e1) {
 			return "High BP must be a valid integer";
 		}
+		
 		// Validate the lowBp input
 		try {
 			Integer.parseInt(lowBp);
@@ -404,6 +422,10 @@ public class Controller {
 		}
 		if (Integer.parseInt(lowBp) > Integer.parseInt(highBp)) {
 			return "Low BP must be smaller than HighBp";
+		}
+		//based off the internet for unsafe levels of blood pressure
+		if(Integer.parseInt(lowBp) > 110 || Integer.paseInt(highBP)> 180){
+			return "Please seek medical Attention for dangerous Blood Pressure Levels";
 		}
 
 		// Validate the note input
@@ -417,25 +439,33 @@ public class Controller {
 
 	public String validateNewUser(String email, String firstName, String lastName, String password, String conPassword,
 			LocalDate date) {
+				//checks to make sure it is an email address that a user is signing up with
 		String regex = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
 		if (!(email.matches(regex))) {
 			return "Invalid email address";
 		}
+		//making sure the email is unique 
 		if (!(unique(email))) {
 			return "Email already in use";
 		}
+		//making sure the firstname isnt null or whitespace
 		if (firstName == null && firstName.length() > 0) {
 			return "Please enter a valid Name";
 		}
+		//making sure the last name is null or whitesapce
 		if (lastName == null && lastName.length() > 0) {
 			return "Please enter a valid Name";
 		}
+		//making sure the date it before today at minium, easy to change for greater validation at the Clients behest
 		if (date != null && !date.isBefore(LocalDate.now())) {
 			return "Date must be before today's date";
 		}
+		//validating that the password isnt null and is above a certain length
+		//only has to be done for the first password as the confirmation is checked agaisnt this
 		if (password == null || password.length() < 8) {
 			return "Invalid password. Must be atleast 8 characters";
 		}
+		//Validating if the two passwords match
 		if (!(password.equals(conPassword))) {
 			return "Passwords don't match";
 		}
