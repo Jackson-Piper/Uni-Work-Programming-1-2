@@ -282,12 +282,50 @@ public class Controller {
 				exportCSVFile(ex.getLocation());
 			}else if(ex.getFileType.equals(".dat")){
 				exportSerliazeFile(ex.getLocation());
-			}else {
-				exportTextFile
+			}else if(ex.getFileType.equals(null)){
+				showErrorPopup("Please select a save file type");
 			}
 			exportRecord(ex.getLocation(), ex.getFileType());
 		})
 	}
+
+	public void exportCSVFile(String location) {
+        String filePath = location + "/records.csv";
+		ArrayList<HealthRecord> data = DatabaseController.tableViewData;
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            // Write header row
+            writer.write("Weight, Temperature, Blood Pressure High, Blood Pressure Low, Note, Date");
+            writer.newLine();
+
+            for (HealthRecord record : data) {
+                writer.write(record.getWeight() + ", ");
+                writer.write(record.getTemperature() + ", ");
+                writer.write(record.getBloodPressureHigh() + ", ");
+                writer.write(record.getBloodPressureLow() + ", ");
+                writer.write(record.getNote() + ", ");
+                writer.write(record.getDate());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+	    public void exportDATFile(String location) {
+        String filePath = location + "/records.dat";
+        ArrayList<HealthRecord> data = DatabaseController.tableViewData;
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filePath)))) {
+            oos.writeObject(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
 	private void confirmDelete(HealthRecord selectedRecord) {
 		ConfirmDelete cd = new ConfirmDelete();

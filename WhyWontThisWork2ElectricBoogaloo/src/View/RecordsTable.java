@@ -17,11 +17,14 @@ public class RecordsTable {
     	    
     	TableColumn<HealthRecord, String> dateCol = new TableColumn<>("Date");
     	dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+		TableColumn<HealthRecord, String> dateCol = new TableColumn<>("Time");
+    	dateCol.setCellValueFactory(new PropertyValueFactory<>("time"));
     	    
     	TableColumn<HealthRecord, String> weightCol = new TableColumn<>("Weight (kg)");
     	weightCol.setCellValueFactory(new PropertyValueFactory<>("weight"));
     	    
-    	TableColumn<HealthRecord, String> tempCol = new TableColumn<>("Temperature (°C)");
+    	TableColumn<HealthRecord, String> tempCol = new TableColumn<>("Temperature (ï¿½C)");
     	tempCol.setCellValueFactory(new PropertyValueFactory<>("temp"));
     	    
     	TableColumn<HealthRecord, String> highBpCol = new TableColumn<>("High Blood Pressure");
@@ -34,7 +37,8 @@ public class RecordsTable {
     	notesCol.setCellValueFactory(new PropertyValueFactory<>("note"));
     	    
     	table.getColumns().addAll(dateCol, weightCol, tempCol, highBpCol, lowBpCol, notesCol);
-    	
+    	table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
     	return table;
     }
     

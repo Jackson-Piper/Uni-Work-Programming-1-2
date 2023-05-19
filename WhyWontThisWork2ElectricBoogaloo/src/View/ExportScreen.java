@@ -20,7 +20,6 @@ Button export;
         
         fileType.getItems().add(".csv");
         fileType.getItems().add(".dat");
-        fileType.getItems().add(".text");
         
         Label locationText = new Label("Please select Where you would like to export it to.");
         Label locationLabel = new Label("No Location selected.");

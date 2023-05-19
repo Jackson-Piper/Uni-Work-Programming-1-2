@@ -39,7 +39,7 @@ public class DatabaseController {
 	public static void createRecordTable(String url) {
 
 		String sql = "CREATE TABLE IF NOT EXISTS record (\nRecordID Text PRIMARY KEY,\n" + "Weight Float,"
-				+ "\nTemp Float," + "\nHighBP integer," + "\nLowBP integer," + "\nNote Text," + "\nDate Text NOT NULL,"
+				+ "\nTemp Float," + "\nHighBP integer," + "\nLowBP integer," + "\nNote Text," + "\nDate Text NOT NULL,"+"\nTime Text NOT NULL,"+
 				+ "Username text NOT NULL,\n" + "\nFOREIGN KEY (Username) REFERENCES user(Username)" + ")";
 
 		try (Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement()) {
@@ -153,14 +153,14 @@ public class DatabaseController {
 	// application,
 	// such as sorting or filtering the data.
 	public static ArrayList tableViewData(String username, String url) {
-		String sql = "SELECT RecordID, Weight, Temp, HighBP, LowBP, Note, Date FROM record WHERE Username = ?";
+		String sql = "SELECT RecordID, Weight, Temp, HighBP, LowBP, Note, Date,Time FROM record WHERE Username = ?";
 		try (Connection conn = DriverManager.getConnection(url);) {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, username);
 			ResultSet rs = stmt.executeQuery();
 			ArrayList<HealthRecord> HealthRecords = new ArrayList<HealthRecord>();
 			while(rs.next()) {
-			HealthRecords.add(new HealthRecord(rs.getString("RecordID"), rs.getString("Weight"), rs.getString("Temp"),rs.getString("HighBP"), rs.getString("LowBP"), rs.getString("Note"), rs.getString("Date")));
+			HealthRecords.add(new HealthRecord(rs.getString("RecordID"), rs.getString("Weight"), rs.getString("Temp"),rs.getString("HighBP"), rs.getString("LowBP"), rs.getString("Note"), rs.getString("Date"), rs.getTime("Time")));
 			}
 			return HealthRecords; 
 		} catch (SQLException e) {
