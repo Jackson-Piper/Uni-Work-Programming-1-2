@@ -37,20 +37,27 @@ public class ProfileScreen extends Application{
 	    Text setLastName = new Text(user.getlastName());
 	    Text setDOB = new Text(user.getDOB());
 	    
-	    GridPane leftGP = new GridPane();
-	    leftGP.add(username, 0,0,1,1);
-	    leftGP.add(firstName,0,1,1,1);
-	    leftGP.add(lastName,0,2,1,1);
-	    leftGP.add(dob,0,3,1,1);
+	    GridPane gp = new GridPane();
+		if (user.getProfilePicture() != null) {
+        Image profilePicture = new Image(user.getProfilePicture());
+        ImageView imageView = new ImageView(profilePicture);
+        imageView.setFitWidth(50);
+        imageView.setFitHeight(50);
+        gp.add(imageView, 0, 4, 2, 1);
+    }
+	    gp.add(username, 0,1);
+	    gp.add(firstName,0,2);
+	    gp.add(lastName,0,3);
+	    gp.add(dob,0,4);
 	    
-	    leftGP.add(setUsername,2,0,1,1);
-	    leftGP.add(setFirstName,2,1,1,1);
-	    leftGP.add(setLastName,2,2,1,1);
-	    leftGP.add(setDOB,2,3,1,1);
-	    leftGP.setAlignment(Pos.CENTER);
-	    leftGP.setHgap(10);
-	    leftGP.setVgap(15);
-	    return leftGP;
+	    gp.add(setUsername,2,1);
+	    gp.add(setFirstName,2,2);
+	    gp.add(setLastName,2,3);
+	    gp.add(setDOB,2,4);
+	    gp.setAlignment(Pos.CENTER);
+	    gp.setHgap(10);
+	    gp.setVgap(15);
+	    return gp;
 	}
 	
 	public void setUser(User user) {

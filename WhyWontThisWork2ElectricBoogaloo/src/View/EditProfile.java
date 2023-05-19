@@ -23,6 +23,7 @@ public class EditProfile extends Application{
 	private TextField lastName;
 	private DatePicker dob;
 	public Button save;
+	private File image;
     
 	@Override
 	public void start(Stage primaryStage){
@@ -57,24 +58,44 @@ public class EditProfile extends Application{
 
 	    this.dob = new DatePicker();
 	    this.dob.setValue(user.getDOBLD());
-	 
-	    GridPane leftGP = new GridPane();
-	    leftGP.add(username, 0,0,1,1);
-	    leftGP.add(firstName,0,1,1,1);
-	    leftGP.add(lastName,0,2,1,1);
-	    leftGP.add(dob,0,3,1,1);
-	    
-	    leftGP.add(this.username,2,0,1,1);
 
-	    leftGP.add(this.firstName,2,1,1,1);
-	    leftGP.add(this.lastName,2,2,1,1);
-	    leftGP.add(this.dob,2,3,1,1);
-	    leftGP.setAlignment(Pos.CENTER);
-	    leftGP.setHgap(10);
-	    leftGP.setVgap(15);
+		Button upload = new Button("Upload");
+    	Label fileName = new Label();
+
+    	uploadButton.setOnAction(event -> {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select an Image");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png")
+        );
+
+        image = fileChooser.showOpenDialog(null);
+        if (image != null) {
+            fileLabel.setText("Selected File: " + image.getName());
+        }
+    });
+	 
+	    GridPane gp = new GridPane();
+	    gp.add(username, 0,0,);
+	    gp.add(firstName,0,1);
+	    gp.add(lastName,0,2);
+	    gp.add(dob,0,3);
+	    
+	    gp.add(this.username,2,0);
+
+	    gp.add(this.firstName,2,1);
+	    gp.add(this.lastName,2,2);
+	    gp.add(this.dob,2,3);
+
+		gp.add(uploadButton, 0, 4);
+    	gp.add(fileLabel, 2, 4);
+
+	    gp.setAlignment(Pos.CENTER);
+	    gp.setHgap(10);
+	    gp.setVgap(15);
 	    
 	    
-	    return leftGP;
+	    return gp;
 	}
 	
 	public void setUser(User user) {
@@ -97,7 +118,15 @@ public class EditProfile extends Application{
 		 }
 		 public LocalDate getDOB() {
 			 return this.dob.getValue();
-
-
 		 }
+
+	public byte[] getImageData(){
+        try (FileInputStream fis = new FileInputStream(image)){
+        	byte[] buffer = new byte[(int) image.length()];
+            fis.read(buffer);
+            return buffer;
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

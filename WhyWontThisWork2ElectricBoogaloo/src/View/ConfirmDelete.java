@@ -17,6 +17,7 @@ public class ConfirmDelete{
 	public Stage popupStage;
 	
 	public void prep(HealthRecord selectedRecord) {
+		
 			Text confirm = new Text("Please confirm you want to delete this record");
 		 	Text Date = new Text ("Date : \t"+ selectedRecord.getDate());
 		    Text Weight = new Text ("Weight : \t"+selectedRecord.getWeight());

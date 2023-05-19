@@ -35,11 +35,6 @@ public class ErrorPopUp extends Application {
 		bp.setAlignment(ok, Pos.CENTER);;
 		
 		this.root = bp;
-        
-		    
-		   
-
-		 	
     }
 	@Override
 	public void start(Stage primaryStage) {

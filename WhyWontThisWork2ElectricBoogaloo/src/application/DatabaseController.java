@@ -121,13 +121,15 @@ public class DatabaseController {
 	}
 
 	public static ResultSet validLogin(String username, String password, String url) {
-		String sql = "SELECT Username, Password FROM user WHERE Username = ? AND Password = ?";
+		String sql = "SELECT Username, Password FROM user WHERE Username = ?";
 		try (Connection conn = DriverManager.getConnection(url);) {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, username);
-			stmt.setString(2, password);
-			ResultSet rs = stmt.executeQuery();
-			return rs;
+			if (rs.next()) {
+            String storedHashedPassword = rs.getString("PasswordHash");
+            if (BCrypt.checkpw(password, storedHashedPassword)) {
+                return rs;
+            }}return null;
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}

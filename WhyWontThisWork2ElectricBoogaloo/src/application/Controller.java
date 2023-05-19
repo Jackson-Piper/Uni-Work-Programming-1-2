@@ -13,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.io.ObjectInputStream;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import Model.HealthRecord;
 import Model.User;
 
@@ -154,8 +156,13 @@ public class Controller {
 
 			String error = validateEditUser(username, firstName, lastName, dob);
 			if (error == null) {
+				if(ep.getImageData==null){
 				user.editProfile(username, firstName, lastName, dob);
 				DatabaseController.updateProfile(username, firstName, lastName, user.getDOB(), user.getUserID(), url);
+				}else{user.editProfile(username, firstName, lastName, dob,ep.getImageData());
+				DatabaseController.updateProfile(username, firstName, lastName, user.getDOB(), user.getUserID(),ep.getImageData(), url)
+
+				}
 				System.out.println("Here 1");
 				profileScreen();
 				showSaved();
@@ -168,16 +175,15 @@ public class Controller {
 
 	}
 
-	// TODO implement a checker to make sure none of the fields entered are empty
-	// and also confirm that the passwords match
 	private void  newUser(String userName, String password, String conPassword, String firstName, String lastName,
 			LocalDate dob) {
 		String userID = UUID.randomUUID().toString();
-		User user = new User(userID, userName, password, firstName, lastName, dob);
+		String hashPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+		User user = new User(userID, userName, hashPassword, firstName, lastName, dob);
 		this.user = user;
 		System.out.println(user.getDOB());
 		System.out.println(dob.toString());
-		DatabaseController.addUser(userID, userName, password, firstName, lastName, user.getDOB(), this.url);
+		DatabaseController.addUser(userID, userName, hashPassword, firstName, lastName, user.getDOB(), this.url);
 		mainScreen();
 	}
 
@@ -329,12 +335,15 @@ public class Controller {
 
 	private void confirmDelete(HealthRecord selectedRecord) {
 		ConfirmDelete cd = new ConfirmDelete();
-		cd.prep(selectedRecord);
-		this.root = cd.getRoot();
-		this.root.setTop(menuBar.getMenuBar());
-		Scene scene = new Scene(this.root, 500, 500);
-		primaryStage.setScene(scene);
-		primaryStage.show();
+		Show(this.root, primaryStage, cd,menuBar.getMenuBar());
+		
+		// cd.prep(selectedRecord);
+		// this.root = cd.getRoot();
+		// this.root.setTop();
+		// Scene scene = new Scene(this.root, 500, 500);
+		// primaryStage.setScene(scene);
+		// primaryStage.show();
+		
 		cd.no.setOnAction(event -> {
 			deleteRecrods();
 		});
@@ -368,6 +377,10 @@ public class Controller {
 				showErrorPopup(validateRecordInput(weight, temp, highBP, lowBP, note));
 				editRecord();
 			} else {
+				//do users need to store a copy of the records anymore?
+				//records are constantly stored and collected from the 
+				//database therfore it makes sense that a user doesnt need to 
+				//update it as when they create one it gets uploaded straight to the database
 				user.editRecord(selectedRecord, weight, temp, highBP, lowBP, note);
 				DatabaseController.updateRecord(weight, temp, highBP, lowBP, note, selectedRecord.getID(), url);
 				editRecord();
