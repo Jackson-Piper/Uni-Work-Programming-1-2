@@ -18,6 +18,7 @@ public class User implements UserInterface{
     private String dob;
     private LocalDate dobLD;
     private ArrayList<HealthRecord> HealthRecords = new ArrayList<HealthRecord>();
+	private byte[] profilePictureData;
 
 	public  User(String userID,String userName, String password, String firstName, String lastName, LocalDate formDOB) {
 		setuserID(userID);
@@ -117,11 +118,17 @@ public class User implements UserInterface{
 	}
 
 	@Override
-	public void editProfile(String username, String firstName, String lastName, LocalDate dob) {
+	public void editProfile(String username, String firstName, String lastName, LocalDate dob, byte[] bs) {
 		setUsername(username);
 		setFirstName(firstName);
 		setLastName(lastName);
-		setDOB(dob);	
+		setDOB(dob);
+		setProfilePicture(bs);
+	}
+
+	private void setProfilePicture(byte[] bs) {
+		this.profilePictureData = bs;
+		
 	}
 
 	@Override
@@ -152,6 +159,19 @@ public class User implements UserInterface{
 
 	public String getPassword() {
 		return password;
+	}
+
+	@Override
+	public void editProfile(String Username, String firstName, String lastName, LocalDate dob) {
+		setUsername(username);
+		setFirstName(firstName);
+		setLastName(lastName);
+		setDOB(dob);
+		
+	}
+
+	public byte[] getProfilePicture() {
+		return this.profilePictureData;
 	}
 }
 

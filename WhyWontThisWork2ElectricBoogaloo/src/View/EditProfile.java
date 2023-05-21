@@ -1,8 +1,11 @@
+
 package View;
 
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
-
 import Model.User;
 import javafx.application.Application;
 import javafx.geometry.HPos;
@@ -14,6 +17,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
+import javafx.scene.control.Label;
+import javafx.stage.FileChooser;
 
 public class EditProfile extends Application{	
 	private BorderPane root;
@@ -23,6 +28,7 @@ public class EditProfile extends Application{
 	private TextField lastName;
 	private DatePicker dob;
 	public Button save;
+	public Button uploadButton;
 	private File image;
     
 	@Override
@@ -52,15 +58,13 @@ public class EditProfile extends Application{
 	    this.username.setText(user.getUsername());
 	    this.firstName = new TextField();
 	    this.firstName.setText(user.getFirstName());
-
 	    this.lastName = new TextField();
 	    this.lastName.setText(user.getlastName());
-
 	    this.dob = new DatePicker();
 	    this.dob.setValue(user.getDOBLD());
 
-		Button upload = new Button("Upload");
-    	Label fileName = new Label();
+		Button upload = new Button("Upload Profile Picture");
+    	Label fileLabel = new Label();
 
     	uploadButton.setOnAction(event -> {
         FileChooser fileChooser = new FileChooser();
@@ -76,7 +80,7 @@ public class EditProfile extends Application{
     });
 	 
 	    GridPane gp = new GridPane();
-	    gp.add(username, 0,0,);
+	    gp.add(username, 0,0);
 	    gp.add(firstName,0,1);
 	    gp.add(lastName,0,2);
 	    gp.add(dob,0,3);
@@ -125,8 +129,9 @@ public class EditProfile extends Application{
         	byte[] buffer = new byte[(int) image.length()];
             fis.read(buffer);
             return buffer;
-        } catch (IOException | SQLException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+		return null;
     }
 }

@@ -3,16 +3,17 @@ package application;
 import View.*;
 
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.io.ObjectInputStream;
-
 import org.mindrot.jbcrypt.BCrypt;
 
 import Model.HealthRecord;
@@ -23,6 +24,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import java.io.BufferedWriter;
 
 public class Controller {
 	User user;
@@ -156,11 +158,11 @@ public class Controller {
 
 			String error = validateEditUser(username, firstName, lastName, dob);
 			if (error == null) {
-				if(ep.getImageData==null){
+				if(ep.getImageData()==null){
 				user.editProfile(username, firstName, lastName, dob);
 				DatabaseController.updateProfile(username, firstName, lastName, user.getDOB(), user.getUserID(), url);
 				}else{user.editProfile(username, firstName, lastName, dob,ep.getImageData());
-				DatabaseController.updateProfile(username, firstName, lastName, user.getDOB(), user.getUserID(),ep.getImageData(), url)
+				DatabaseController.updateProfile(username, firstName, lastName, user.getDOB(), user.getUserID(),ep.getImageData(), url);
 
 				}
 				System.out.println("Here 1");
@@ -175,6 +177,8 @@ public class Controller {
 
 	}
 
+	// TODO implement a checker to make sure none of the fields entered are empty
+	// and also confirm that the passwords match
 	private void  newUser(String userName, String password, String conPassword, String firstName, String lastName,
 			LocalDate dob) {
 		String userID = UUID.randomUUID().toString();
@@ -210,7 +214,7 @@ public class Controller {
 				String recordID = UUID.randomUUID().toString();
 				user.createRecord(recordID, weight, temp, highBP, lowBP, note);
 				HealthRecord newRecord = getRecord(recordID);
-				DatabaseController.insertRecord(newRecord.getID(), newRecord.getWeight(), newRecord.getTemp(), newRecord.getHighBP(), newRecord.getLowBP(), newRecord.getDate(), newRecord.getNote(), user.getUsername(), url);
+				DatabaseController.insertRecord(newRecord.getID(), newRecord.getWeight(), newRecord.getTemp(), newRecord.getHighBP(), newRecord.getLowBP(), newRecord.getDate(),newRecord.getTime() ,newRecord.getNote(), user.getUsername(), url);
 				System.out.println("8");
 				createRecordScreen();
 				showSaved();
@@ -219,6 +223,7 @@ public class Controller {
 	}
 
 	private HealthRecord getRecord(String recordID) {
+		
 		for (HealthRecord record : user.getRecords()) {
 			if(record.getID().equals(recordID)) {
 				return record;
@@ -275,75 +280,14 @@ public class Controller {
 		});
 	}
 
-	private void exportRecordScreen(){
-		ExportScreen ex = new ExportScreen();
-		ex.start(primaryStage);
-		this.root = ex.getRoot();
-		this.root.setTop(menuBar.getMenuBar());
-		Scene = new Scene(this.root, 500, 500);
-		primaryStage.setScene(scene);
-		primaryStage.show();
-		ex.export.setOnAction(Event ->{
-			if(ex.getFileType.equals(".csv")){
-				exportCSVFile(ex.getLocation());
-			}else if(ex.getFileType.equals(".dat")){
-				exportSerliazeFile(ex.getLocation());
-			}else if(ex.getFileType.equals(null)){
-				showErrorPopup("Please select a save file type");
-			}
-			exportRecord(ex.getLocation(), ex.getFileType());
-		})
-	}
-
-	public void exportCSVFile(String location) {
-        String filePath = location + "/records.csv";
-		ArrayList<HealthRecord> data = DatabaseController.tableViewData;
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            // Write header row
-            writer.write("Weight, Temperature, Blood Pressure High, Blood Pressure Low, Note, Date");
-            writer.newLine();
-
-            for (HealthRecord record : data) {
-                writer.write(record.getWeight() + ", ");
-                writer.write(record.getTemperature() + ", ");
-                writer.write(record.getBloodPressureHigh() + ", ");
-                writer.write(record.getBloodPressureLow() + ", ");
-                writer.write(record.getNote() + ", ");
-                writer.write(record.getDate());
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-	    public void exportDATFile(String location) {
-        String filePath = location + "/records.dat";
-        ArrayList<HealthRecord> data = DatabaseController.tableViewData;
-        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filePath)))) {
-            oos.writeObject(data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-
 	private void confirmDelete(HealthRecord selectedRecord) {
 		ConfirmDelete cd = new ConfirmDelete();
-		Show(this.root, primaryStage, cd,menuBar.getMenuBar());
-		
-		// cd.prep(selectedRecord);
-		// this.root = cd.getRoot();
-		// this.root.setTop();
-		// Scene scene = new Scene(this.root, 500, 500);
-		// primaryStage.setScene(scene);
-		// primaryStage.show();
-		
+		cd.prep(selectedRecord);
+		this.root = cd.getRoot();
+		this.root.setTop(menuBar.getMenuBar());
+		Scene scene = new Scene(this.root, 500, 500);
+		primaryStage.setScene(scene);
+		primaryStage.show();
 		cd.no.setOnAction(event -> {
 			deleteRecrods();
 		});
@@ -377,16 +321,63 @@ public class Controller {
 				showErrorPopup(validateRecordInput(weight, temp, highBP, lowBP, note));
 				editRecord();
 			} else {
-				//do users need to store a copy of the records anymore?
-				//records are constantly stored and collected from the 
-				//database therfore it makes sense that a user doesnt need to 
-				//update it as when they create one it gets uploaded straight to the database
 				user.editRecord(selectedRecord, weight, temp, highBP, lowBP, note);
 				DatabaseController.updateRecord(weight, temp, highBP, lowBP, note, selectedRecord.getID(), url);
 				editRecord();
 			}
 		});
 	}
+	
+	private void exportRecordScreen(){
+		ExportScreen ex = new ExportScreen();
+		ex.start(primaryStage);
+		this.root = ex.getRoot();
+		this.root.setTop(menuBar.getMenuBar());
+		Scene scene = new Scene(this.root, 500, 500);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		ex.export.setOnAction(Event ->{
+			if(ex.getFileType().equals(".csv")){
+				exportCSVFile(ex.getLocation());
+			}else if(ex.getFileType().equals(".dat")){
+				exportDATFile(ex.getLocation());
+			}else if(ex.getFileType().equals(null)){
+				showErrorPopup("Please select a save file type");
+			}
+		});
+	}
+	
+	public void exportCSVFile(String location) {
+        String filePath = location + "/records.csv";
+		ArrayList<HealthRecord> data = DatabaseController.tableViewData(user.getUsername(), url);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            // Write header row
+            writer.write("Weight, Temperature, Blood Pressure High, Blood Pressure Low, Note, Date");
+            writer.newLine();
+
+            for (HealthRecord record : data) {
+                writer.write(record.getWeight() + ", ");
+                writer.write(record.getTemp() + ", ");
+                writer.write(record.getHighBP() + ", ");
+                writer.write(record.getLowBP() + ", ");
+                writer.write(record.getNote() + ", ");
+                writer.write(record.getDate());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+	    public void exportDATFile(String location) {
+        String filePath = location + "/records.dat";
+        ArrayList<HealthRecord> data = DatabaseController.tableViewData(user.getUsername(), url);
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filePath)))) {
+            oos.writeObject(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 	private void viewRecordsScreen() {
 		ViewRecords vr = new ViewRecords();
@@ -440,7 +431,7 @@ public class Controller {
 		}
 	}
 
-	private String validateRecordInput(String weight, String temp, String highBp, String lowBp, String note) {
+	private String validateRecordInput(String weight, String temp, String highBP, String lowBp, String note) {
 		// Validate the weight input
 		try {
 			Double.parseDouble(weight);
@@ -455,28 +446,31 @@ public class Controller {
 			return "Temp must be a valid integer";
 		}
 		//Validate safe levels for tempreture
-		if(Double.parseDouble(temp)>39 || Double.parseDouble(temp)<35){
-			return "Please seek medical Attention for abnormal Tempreture";
+		if(Double.parseDouble(temp)!=0 &&(Double.parseDouble(temp)>39 || Double.parseDouble(temp)<35)){
+		return "Please seek medical Attention for abnormal Tempreture";
 		}
+
 		// Validate the highBp input
 		try {
-			Integer.parseInt(highBp);
+			Integer.parseInt(highBP);
 		} catch (NumberFormatException e1) {
 			return "High BP must be a valid integer";
 		}
-		
 		// Validate the lowBp input
 		try {
 			Integer.parseInt(lowBp);
 		} catch (NumberFormatException e1) {
 			return "Low BP must be a valid integer";
 		}
-		if (Integer.parseInt(lowBp) > Integer.parseInt(highBp)) {
+		
+		if (Integer.parseInt(lowBp) > Integer.parseInt(highBP)) {
 			return "Low BP must be smaller than HighBp";
 		}
 		//based off the internet for unsafe levels of blood pressure
-		if(Integer.parseInt(lowBp) > 110 || Integer.paseInt(highBP)> 180){
-			return "Please seek medical Attention for dangerous Blood Pressure Levels";
+		if(Integer.parseInt(lowBp) !=0 && Integer.parseInt(highBP) !=0) {
+				if(Integer.parseInt(lowBp) > 110 || Integer.parseInt(highBP)> 180){
+					return "Please seek medical Attention for dangerous Blood Pressure Levels";
+				}
 		}
 
 		// Validate the note input
@@ -490,33 +484,25 @@ public class Controller {
 
 	public String validateNewUser(String email, String firstName, String lastName, String password, String conPassword,
 			LocalDate date) {
-				//checks to make sure it is an email address that a user is signing up with
 		String regex = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
 		if (!(email.matches(regex))) {
 			return "Invalid email address";
 		}
-		//making sure the email is unique 
 		if (!(unique(email))) {
 			return "Email already in use";
 		}
-		//making sure the firstname isnt null or whitespace
 		if (firstName == null && firstName.length() > 0) {
 			return "Please enter a valid Name";
 		}
-		//making sure the last name is null or whitesapce
 		if (lastName == null && lastName.length() > 0) {
 			return "Please enter a valid Name";
 		}
-		//making sure the date it before today at minium, easy to change for greater validation at the Clients behest
 		if (date != null && !date.isBefore(LocalDate.now())) {
 			return "Date must be before today's date";
 		}
-		//validating that the password isnt null and is above a certain length
-		//only has to be done for the first password as the confirmation is checked agaisnt this
 		if (password == null || password.length() < 8) {
 			return "Invalid password. Must be atleast 8 characters";
 		}
-		//Validating if the two passwords match
 		if (!(password.equals(conPassword))) {
 			return "Passwords don't match";
 		}

@@ -1,15 +1,25 @@
-package View;
+ package View;
 
+import java.io.File;
+
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import javafx.stage.DirectoryChooser;
 
 public class ExportScreen extends Application {
-BorderPane root;
-File location
-ChoiceBox fileType;
-Button export;
-	@Overide
-	public void Start(primaryStage) {
+private BorderPane root;
+private File location;
+private ChoiceBox fileType;
+public Button export;
+	
+	@Override
+	public void start(Stage primaryStage) {
         
         BorderPane bp = new BorderPane();
         primaryStage.setTitle("My Medical - Record - Export");
@@ -20,15 +30,17 @@ Button export;
         
         fileType.getItems().add(".csv");
         fileType.getItems().add(".dat");
+        fileType.getItems().add(".text");
         
         Label locationText = new Label("Please select Where you would like to export it to.");
         Label locationLabel = new Label("No Location selected.");
         Button locationButton = new Button("Choose a location.");
+        DirectoryChooser directoryChooser = new DirectoryChooser();
 
         locationButton.setOnAction(e -> {
             File location = directoryChooser.showDialog(primaryStage);
 
-            if (selectedDirectory != null) {
+            if (location != null) {
                 locationLabel.setText(location.getAbsolutePath());
             } else {
 
@@ -39,7 +51,7 @@ Button export;
         export = new Button("Export Records");
         
         
-        GridPane gp = New GridPane();
+        GridPane gp = new GridPane();
 
         gp.add(File, 0, 0);
         gp.add(fileType, 0, 1);
@@ -55,13 +67,13 @@ Button export;
        
         gp.setAlignment(Pos.CENTER);
 
-        bp.setCenter(gp)
-        this.root = bp
+        bp.setCenter(gp);
+        this.root = bp;
 
 
 	}
 
-    public BoderPane getRoot(){
+    public BorderPane getRoot(){
      return this.root;
     }
 
@@ -70,6 +82,7 @@ Button export;
     }
 
     public String getFileType(){
-        return fileType.getValue();
+        return (String) fileType.getValue();
     }
+
 }

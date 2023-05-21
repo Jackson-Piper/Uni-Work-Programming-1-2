@@ -16,7 +16,7 @@ public class DatabaseController {
 	public static void createUserTable(String url) {
 		String sql = "CREATE TABLE IF NOT EXISTS user (\n" +"UserID text PRIMARY KEY,\n"+ "Username text NOT NULL,\n"
 				+ "Password text NOT NULL,\n" + "FirstName Text NOT NULL,\n" + "LastName Text NOT NULL,\n"
-				+ "DOB Text NOT NULL\n" + ")";
+				+ "DOB Text NOT NULL,\n"+"Picture BLOB\n" + ")";
 
 		try (Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement()) {
 			stmt.execute(sql);
@@ -31,6 +31,7 @@ public class DatabaseController {
 				}
 
 			} catch (SQLException e1) {
+				System.out.println("Create Table");
 				System.out.println(e1.getMessage());
 			}
 		}
@@ -39,12 +40,13 @@ public class DatabaseController {
 	public static void createRecordTable(String url) {
 
 		String sql = "CREATE TABLE IF NOT EXISTS record (\nRecordID Text PRIMARY KEY,\n" + "Weight Float,"
-				+ "\nTemp Float," + "\nHighBP integer," + "\nLowBP integer," + "\nNote Text," + "\nDate Text NOT NULL,"+"\nTime Text NOT NULL,"+
+				+ "\nTemp Float," + "\nHighBP integer," + "\nLowBP integer," + "\nNote Text," + "\nDate Text NOT NULL,"+"\nTime text NOT NULL,"
 				+ "Username text NOT NULL,\n" + "\nFOREIGN KEY (Username) REFERENCES user(Username)" + ")";
 
 		try (Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement()) {
 			stmt.execute(sql);
 		} catch (SQLException e) {
+			System.out.println("Create Table Record");
 			System.out.println(e.getMessage());
 		}
 	}
@@ -101,9 +103,9 @@ public class DatabaseController {
 		}
 	}
 
-	public static void insertRecord(String recordID, String Weight, String Temp, String HighBP, String LowBP, String Date, String note, String Username,
+	public static void insertRecord(String recordID, String Weight, String Temp, String HighBP, String LowBP, String Date,String Time, String note, String Username,
 			String url) {
-		String sql = "INSERT INTO record(RecordID, Weight, Temp, HighBP, LowBP, Date, Note, Username) VALUES(?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO record(RecordID, Weight, Temp, HighBP, LowBP, Date, Time, Note, Username) VALUES(?,?,?,?,?,?,?,?,?)";
 		try (Connection conn = DriverManager.getConnection(url);) {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, recordID);
@@ -112,8 +114,9 @@ public class DatabaseController {
 			stmt.setString(4, HighBP);
 			stmt.setString(5, LowBP);
 			stmt.setString(6, Date);
-			stmt.setString(7, note);
-			stmt.setString(8, Username);
+			stmt.setString(7, Time);
+			stmt.setString(8, note);
+			stmt.setString(9, Username);
 			stmt.execute();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -125,12 +128,12 @@ public class DatabaseController {
 		try (Connection conn = DriverManager.getConnection(url);) {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
-            String storedHashedPassword = rs.getString("PasswordHash");
-            if (BCrypt.checkpw(password, storedHashedPassword)) {
-                return rs;
-            }}return null;
+	            String storedHashedPassword = rs.getString("PasswordHash");
+	            if (BCrypt.checkpw(password, storedHashedPassword)) {
 		} catch (SQLException e) {
+			System.out.println("valid Login");
 			System.out.println(e.getMessage());
 		}
 		return null;
@@ -155,14 +158,14 @@ public class DatabaseController {
 	// application,
 	// such as sorting or filtering the data.
 	public static ArrayList tableViewData(String username, String url) {
-		String sql = "SELECT RecordID, Weight, Temp, HighBP, LowBP, Note, Date,Time FROM record WHERE Username = ?";
+		String sql = "SELECT RecordID, Weight, Temp, HighBP, LowBP, Note, Date, Time FROM record WHERE Username = ?";
 		try (Connection conn = DriverManager.getConnection(url);) {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, username);
 			ResultSet rs = stmt.executeQuery();
 			ArrayList<HealthRecord> HealthRecords = new ArrayList<HealthRecord>();
 			while(rs.next()) {
-			HealthRecords.add(new HealthRecord(rs.getString("RecordID"), rs.getString("Weight"), rs.getString("Temp"),rs.getString("HighBP"), rs.getString("LowBP"), rs.getString("Note"), rs.getString("Date"), rs.getTime("Time")));
+			HealthRecords.add(new HealthRecord(rs.getString("RecordID"), rs.getString("Weight"), rs.getString("Temp"),rs.getString("HighBP"), rs.getString("LowBP"), rs.getString("Note"), rs.getString("Date"), rs.getString("Time")));
 			}
 			return HealthRecords; 
 		} catch (SQLException e) {
@@ -181,6 +184,26 @@ public class DatabaseController {
 			System.out.println(e.getMessage());
 		}
 
+	}
+
+	public static void updateProfile(String username, String firstName, String lastName, String dob, String userID,
+			byte[] imageData, String url) {
+		String sql = "UPDATE user SET Username = ?, FirstName = ?, LastName = ?, DOB = ?, Picture =? WHERE UserID = ?";
+		try (Connection conn = DriverManager.getConnection(url);) {
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, username);
+			stmt.setString(2, firstName);
+			stmt.setString(3, lastName);
+			stmt.setString(4, dob);
+			stmt.setBytes(5, imageData);
+			stmt.setString(6, userID);
+			stmt.execute();
+			System.out.println("Executed");
+		} catch (SQLException e) {
+			System.out.println("Here 2");
+			System.out.println(e.getMessage());
+		}
+		
 	}
 }
 	

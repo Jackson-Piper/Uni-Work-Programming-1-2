@@ -3,14 +3,12 @@ package View;
 import Model.User;
 import javafx.application.Application;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
+import javafx.scene.image.*;
+import java.io.ByteArrayInputStream;
 
 public class ProfileScreen extends Application{	
 	private BorderPane root;
@@ -39,11 +37,12 @@ public class ProfileScreen extends Application{
 	    
 	    GridPane gp = new GridPane();
 		if (user.getProfilePicture() != null) {
-        Image profilePicture = new Image(user.getProfilePicture());
+		ByteArrayInputStream input = new ByteArrayInputStream(user.getProfilePicture());
+        Image profilePicture = new Image(input);
         ImageView imageView = new ImageView(profilePicture);
         imageView.setFitWidth(50);
         imageView.setFitHeight(50);
-        gp.add(imageView, 0, 4, 2, 1);
+        gp.add(imageView, 0, 0, 2, 1);
     }
 	    gp.add(username, 0,1);
 	    gp.add(firstName,0,2);
@@ -67,5 +66,4 @@ public class ProfileScreen extends Application{
 	public BorderPane getRoot() {
 		return this.root;
 	}
-
     }

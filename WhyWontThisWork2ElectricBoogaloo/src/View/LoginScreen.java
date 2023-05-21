@@ -27,7 +27,6 @@ public class LoginScreen extends Application {
     private BorderPane root;
     public Button login;
     public Button createAccount;
-    public Button 
 
     @Override
     public void start(Stage primaryStage) {
@@ -74,9 +73,11 @@ public class LoginScreen extends Application {
         BorderPane.setMargin(logo, new Insets(50, 0, 0, 0));
         BorderPane.setMargin(gridPane, new Insets(-100, 0, 0, 0));
         createAccount.setOnAction(event ->{
-        System.out.println("Create Account");
+        	System.out.println("Create Account");
+//            loadCreatAccount();
         });
 
+//        login.setOnAction(new EventHandler<ActionEvent>());
         System.out.println("5");
         this.root = bp;
     }
@@ -86,11 +87,20 @@ public class LoginScreen extends Application {
     }
     
     public String getUsername() {
+//    	try {
+    		System.out.println(usernameField.getText());
         return usernameField.getText();
+//    	}catch(NullPointerException e){
+//    		return null;
+//    	}
     }
 
     public String getPassword() {
+    	try {
             return passwordField.getText();
+        	}catch(NullPointerException e){
+        		return null;
+        	}
     }
 
     public void showError(String message) {
